@@ -63,8 +63,8 @@
 \newcommand{\pubiconboxwidth}{5.95mm}
 \newcommand{\pubicongap}{1.28mm}
 \newcommand{\pubiconartwidth}{3.12mm}
-\newcommand{\pubiconartxshift}{-0.42mm}
-\newcommand{\pubiconartyshift}{0.34mm}
+\newcommand{\pubiconartxshift}{0pt}
+\newcommand{\pubiconartyshift}{0pt}
 \newcommand{\pubicontrimleft}{24.42bp}
 \newcommand{\pubicontrimbottom}{133.05bp}
 \newcommand{\pubicontrimright}{24.42bp}
@@ -77,8 +77,8 @@
 \newcommand{\orcidtrimtop}{0bp}
 \newcommand{\orcidbaseline}{-0.82mm}
 \newcommand{\pubtextwidth}{45.2mm}
-\newcommand{\publineheight}{15.25}
-\newcommand{\pubentrygap}{0.80mm}
+\newcommand{\publineheight}{14.05}
+\newcommand{\pubentrygap}{0.72mm}
 \newcommand{\beforepublicationsgap}{1.70mm}
 \newcommand{\dividergap}{1.22mm}
 \newcommand{\skillgroupvspace}{1.45mm}
@@ -149,11 +149,15 @@
 }
 
 \newsavebox{\pubtextbox}
+\newsavebox{\pubiconbox}
 \newlength{\pubboxheight}
+\newlength{\pubiconraise}
 
 \newcommand{\pubicon}[1]{%
   \begin{tikzpicture}[baseline=(current bounding box.north)]
     \path[fill=cvteal,rounded corners=1.0mm] (0pt,0pt) rectangle (\pubiconwidth,-#1);
+    \cvmetricdim{publication_chain_center_x_delta_pt}{\pubiconartxshift}%
+    \cvmetricdim{publication_chain_center_y_delta_pt}{\pubiconartyshift}%
     \coordinate (icontop) at (\pubiconcenterx,0pt);
     \coordinate (iconbottom) at (\pubiconcenterx,-#1);
     \node[inner sep=0pt]
@@ -188,16 +192,20 @@
   \sbox{\pubtextbox}{%
     \begin{minipage}[t]{\pubtextwidth}\vspace{0pt}\raggedright\fontsize{10.15}{\publineheight}\selectfont #2\end{minipage}}%
   \setlength{\pubboxheight}{\dimexpr\ht\pubtextbox+\dp\pubtextbox\relax}%
+  \sbox{\pubiconbox}{#1{\pubboxheight}}%
+  \setlength{\pubiconraise}{\dimexpr\ht\pubtextbox-\ht\pubiconbox\relax}%
   \cvmetricdim{publication_height_delta_pt}{\pubboxheight-\ht\pubtextbox-\dp\pubtextbox}%
   \cvmetricdim{publication_icon_center_delta_pt}{\pubiconcenterx-\pubiconwidth/2}%
+  \cvmetricdim{publication_top_delta_pt}{\pubiconraise+\ht\pubiconbox-\ht\pubtextbox}%
+  \cvmetricdim{publication_bottom_delta_pt}{\pubiconraise-\dp\pubiconbox+\dp\pubtextbox}%
   \noindent
-  \begin{minipage}[t][\pubboxheight][t]{\pubiconboxwidth}\vspace{0pt}#1{\pubboxheight}\end{minipage}%
+  \raisebox{\pubiconraise}{\makebox[\pubiconboxwidth][l]{\usebox{\pubiconbox}}}%
   \hspace{\pubicongap}%
   \usebox{\pubtextbox}%
   \par\vspace{\pubentrygap}
 }
 
-\newcommand{\pubbreak}{\linebreak[4]}
+\newcommand{\pubbreak}{\penalty0\ }
 
 \newcommand{\mainsection}[1]{%
   \vspace{0.05mm}
@@ -277,6 +285,7 @@
       pertinent questions and the\\
       commitment to finding the answers.\par}
 
+      \cvstretchgap
       \sideheading{SOFT-SKILLS}
       {\fontsize{9.9}{11.1}\selectfont
       \begin{itemize}[leftmargin=5.2mm,itemsep=0.15mm,topsep=0mm,parsep=0pt]
@@ -285,6 +294,7 @@
         \item Result Oriented
       \end{itemize}}
 
+      \cvstretchgap
       \sideheading{DIGITAL SKILLS}
       \skillgroup{Physic Simulation}{%
         \begin{tabular}{@{}l@{\hspace{2.1mm}\vrule\hspace{2.1mm}}l@{}}

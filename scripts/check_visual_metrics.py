@@ -16,6 +16,10 @@ LIMITS = {
     "main_content_bottom_delta_pt": 0.10,
     "publication_height_delta_pt": 0.25,
     "publication_icon_center_delta_pt": 0.10,
+    "publication_chain_center_x_delta_pt": 0.10,
+    "publication_chain_center_y_delta_pt": 0.10,
+    "publication_top_delta_pt": 0.10,
+    "publication_bottom_delta_pt": 0.10,
     "mainsection_rule_center_delta_pt": 0.15,
     "divider_gap_delta_pt": 0.05,
 }
@@ -62,6 +66,14 @@ def main() -> int:
         checks.append((f"publication {idx}: badge height equals text box height", abs(value), LIMITS["publication_height_delta_pt"]))
     for idx, value in enumerate(require(metrics, "publication_icon_center_delta_pt"), start=1):
         checks.append((f"publication {idx}: icon center equals badge center", abs(value), LIMITS["publication_icon_center_delta_pt"]))
+    for idx, value in enumerate(require(metrics, "publication_chain_center_x_delta_pt"), start=1):
+        checks.append((f"publication {idx}: link chain center has no x offset", abs(value), LIMITS["publication_chain_center_x_delta_pt"]))
+    for idx, value in enumerate(require(metrics, "publication_chain_center_y_delta_pt"), start=1):
+        checks.append((f"publication {idx}: link chain center has no y offset", abs(value), LIMITS["publication_chain_center_y_delta_pt"]))
+    for idx, value in enumerate(require(metrics, "publication_top_delta_pt"), start=1):
+        checks.append((f"publication {idx}: badge top equals text box top", abs(value), LIMITS["publication_top_delta_pt"]))
+    for idx, value in enumerate(require(metrics, "publication_bottom_delta_pt"), start=1):
+        checks.append((f"publication {idx}: badge bottom equals text box bottom", abs(value), LIMITS["publication_bottom_delta_pt"]))
     for idx, value in enumerate(require(metrics, "mainsection_rule_center_delta_pt"), start=1):
         checks.append((f"main section {idx}: rule centered on title box", abs(value), LIMITS["mainsection_rule_center_delta_pt"]))
 
