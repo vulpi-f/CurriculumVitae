@@ -1,10 +1,10 @@
-\documentclass[10pt,a4paper]{article}
+\documentclass[10pt]{article}
 
-\usepackage[a4paper,margin=0mm]{geometry}
+\usepackage[paperwidth=210.079mm,paperheight=297.127mm,margin=0mm]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{newtxtext}
-\usepackage[scaled=0.93]{helvet}
+\usepackage[lf,p]{biolinum}
+\usepackage[lining,p]{montserrat}
 \usepackage{textcomp}
 \usepackage{graphicx}
 \usepackage{xcolor}
@@ -26,11 +26,13 @@
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\fboxsep}{0pt}
-\pdfpagewidth=210mm
-\pdfpageheight=297mm
+\pdfpagewidth=210.079mm
+\pdfpageheight=297.127mm
 \hypersetup{colorlinks=true,urlcolor=cvteal,linkcolor=cvteal}
 
-\newcommand{\sans}{\fontfamily{phv}\selectfont}
+\newcommand{\bio}{\fontfamily{LinuxBiolinumT-LF}\selectfont}
+\newcommand{\sans}{\fontfamily{Montserrat-LF}\selectfont}
+\renewcommand{\familydefault}{LinuxBiolinumT-LF}
 \newcommand{\wide}[1]{{\sans\bfseries\textls[180]{#1}}}
 \newcommand{\cvlink}[2]{\href{#1}{\textcolor{cvteal}{\underline{#2}}}}
 \newcommand{\headerlink}[2]{\href{#1}{\textcolor{white}{\underline{#2}}}}
@@ -131,12 +133,12 @@
   \fill[cvteal] (0,0) rectangle (210,36.1);
   \fill[cvbg] (0,36.1) rectangle (210,297);
 
-  \draw[cvteal,line width=1.05mm,rounded corners=5mm]
-    (0.5,39.2) -- (53.4,39.2) -- (60.1,45.9) -- (60.1,287.7) -- (53.4,294.2) -- (3.0,294.2);
+  \draw[cvteal,line width=0.68mm,rounded corners=5.3mm]
+    (-9.32,39.02) rectangle (60.21,293.64);
 
   \begin{scope}
-    \clip[rounded corners=4.2mm] (3.0,2.8) rectangle (60.0,33.0);
-    \node[inner sep=0pt] at (31.5,17.9) {\includegraphics[width=62.0mm]{CV_picture_header.jpg}};
+    \clip[rounded corners=4.5mm] (3.00,3.00) rectangle (60.33,33.01);
+    \node[anchor=north west,inner sep=0pt] at (-3.10,0.80) {\includegraphics[width=67.53mm]{CV_picture_canva.png}};
   \end{scope}
 
   \node[anchor=north,text=white,font=\sans\bfseries\fontsize{30.2}{32.3}\selectfont] at (135,3.6) {Fabio Vulpi};
