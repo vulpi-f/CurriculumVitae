@@ -12,6 +12,8 @@ import sys
 from pathlib import Path
 
 LIMITS = {
+    "sidebar_content_bottom_delta_pt": 0.10,
+    "main_content_bottom_delta_pt": 0.10,
     "publication_height_delta_pt": 0.25,
     "publication_icon_center_delta_pt": 0.10,
     "mainsection_rule_center_delta_pt": 0.15,
@@ -44,6 +46,17 @@ def main() -> int:
 
     metrics = read_metrics(log_path)
     checks: list[tuple[str, float, float]] = []
+
+    checks.append((
+        "sidebar frame: fixed top plus height reaches target bottom",
+        abs(require(metrics, "sidebar_content_bottom_delta_pt")[0]),
+        LIMITS["sidebar_content_bottom_delta_pt"],
+    ))
+    checks.append((
+        "main frame: fixed top plus height reaches target bottom",
+        abs(require(metrics, "main_content_bottom_delta_pt")[0]),
+        LIMITS["main_content_bottom_delta_pt"],
+    ))
 
     for idx, value in enumerate(require(metrics, "publication_height_delta_pt"), start=1):
         checks.append((f"publication {idx}: badge height equals text box height", abs(value), LIMITS["publication_height_delta_pt"]))

@@ -39,6 +39,17 @@
 % - Publication link badges compute their height from the text box and centre
 %   the trimmed icon with TikZ interpolation; keep this pattern for entries of
 %   any length.
+\newlength{\cvcontentbottom}
+\newlength{\cvsidebarcontenttop}
+\newlength{\cvmaincontenttop}
+\newlength{\cvsidebarcontentheight}
+\newlength{\cvmaincontentheight}
+\setlength{\cvcontentbottom}{292.55mm}
+\setlength{\cvsidebarcontenttop}{38.95mm}
+\setlength{\cvmaincontenttop}{38.65mm}
+\setlength{\cvsidebarcontentheight}{\dimexpr\cvcontentbottom-\cvsidebarcontenttop\relax}
+\setlength{\cvmaincontentheight}{\dimexpr\cvcontentbottom-\cvmaincontenttop\relax}
+\newcommand{\cvstretchgap}{\par\vspace{0pt plus 1fill}}
 \newcommand{\sidearrowwidth}{5.20mm}
 \newcommand{\sidearrowheight}{5.20mm}
 \newcommand{\sidearrowboxwidth}{5.45mm}
@@ -51,7 +62,9 @@
 \newcommand{\pubiconwidth}{5.25mm}
 \newcommand{\pubiconboxwidth}{5.95mm}
 \newcommand{\pubicongap}{1.28mm}
-\newcommand{\pubiconartwidth}{3.52mm}
+\newcommand{\pubiconartwidth}{3.12mm}
+\newcommand{\pubiconartxshift}{-0.42mm}
+\newcommand{\pubiconartyshift}{0.34mm}
 \newcommand{\pubicontrimleft}{24.42bp}
 \newcommand{\pubicontrimbottom}{133.05bp}
 \newcommand{\pubicontrimright}{24.42bp}
@@ -97,6 +110,10 @@
   \typeout{CVVISUAL|#1|\strip@pt\dimen@ pt}%
   \endgroup
 }
+\newcommand{\cvframeconstraintmetrics}{%
+  \cvmetricdim{sidebar_content_bottom_delta_pt}{\cvsidebarcontenttop+\cvsidebarcontentheight-\cvcontentbottom}%
+  \cvmetricdim{main_content_bottom_delta_pt}{\cvmaincontenttop+\cvmaincontentheight-\cvcontentbottom}%
+}
 
 \newcommand{\sideheading}[1]{%
   \vspace{0.52mm}%
@@ -140,7 +157,7 @@
     \coordinate (icontop) at (\pubiconcenterx,0pt);
     \coordinate (iconbottom) at (\pubiconcenterx,-#1);
     \node[inner sep=0pt]
-      at ($(icontop)!0.5!(iconbottom)$) {%
+      at ($($(icontop)!0.5!(iconbottom)$)+(\pubiconartxshift,\pubiconartyshift)$) {%
         \includegraphics[
           width=\pubiconartwidth,
           trim=\pubicontrimleft{} \pubicontrimbottom{} \pubicontrimright{} \pubicontrimtop{},
@@ -208,7 +225,7 @@
 
 \newcommand{\divider}{%
   \cvmetricdim{divider_gap_delta_pt}{\dividergap-\dividergap}%
-  \par\vspace{\dividergap}\nointerlineskip\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\vspace{\dividergap}
+  \par\vspace{\dividergap plus 1fill}\nointerlineskip\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\vspace{\dividergap plus 1fill}
 }
 
 \newcommand{\cvitems}{%
@@ -228,6 +245,7 @@
 \null
 \begin{tikzpicture}[remember picture,overlay,x=1mm,y=-1mm]
 \begin{scope}[shift={(current page.north west)}]
+  \cvframeconstraintmetrics
   \fill[cvteal] (0,0) rectangle (210,36.1);
   \fill[cvbg] (0,36.1) rectangle (210,297);
 
@@ -250,7 +268,7 @@
   \node[anchor=west] at (169.6,31.55) {\headeritem{envelope}{mailto:vulpi.fabio@gmail.com}{vulpi.fabio@gmail.com}};
 
   \node[anchor=north west,inner sep=0pt] at (2.65,38.95) {%
-    \begin{minipage}[t]{55.0mm}
+    \begin{minipage}[t][\cvsidebarcontentheight][s]{55.0mm}
       \sideheading{ABOUT ME}
       {\fontsize{9.85}{12.75}\selectfont
       Daring and versatile, I firmly believe\\
@@ -285,11 +303,13 @@
           MeshLab & Eagle - PCB design
         \end{tabular}}
 
+      \cvstretchgap
       \sideheading{LANGUAGES}
       \langbar{Italiano}{C 2}{45.5}
       \langbar{English}{C 1}{38.0}
       \langbar{Deutsch}{A 2}{15.0}
 
+      \cvstretchgap
       \vspace{\beforepublicationsgap}
       \pubheading{PUBLICATIONS}
       \publication{\pubicon}{Kalman Supervised Network for\pubbreak improved Model Predictions.}
@@ -301,7 +321,7 @@
     \end{minipage}};
 
   \node[anchor=north west,inner sep=0pt] at (63.7,38.65) {%
-    \begin{minipage}[t]{143.8mm}
+    \begin{minipage}[t][\cvmaincontentheight][s]{143.8mm}
       \mainsection{WORK EXPERIENCE}
       \entry{Experienced Consultant}{10/2024 - current}
         {\cvlink{https://www.amaris.com/}{Amaris Consulting}}
