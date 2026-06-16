@@ -5,10 +5,29 @@ LaTeX source for Fabio Vulpi's one-page CV.
 ## Build
 
 ```sh
-latexmk cv.tex
+latexmk -pdf -interaction=nonstopmode cv.tex
+python3 scripts/check_visual_metrics.py cv.log
 ```
 
-The generated file is `cv.pdf`.
+The generated file is `cv.pdf`.  The second command validates the visual-layout
+metrics emitted in the LaTeX log.
+
+## Visual metrics
+
+`cv.tex` emits `CVVISUAL|...` lines while it builds.  These values are intended
+to fail fast when text edits accidentally break the planned visual alignment:
+
+- `publication_height_delta_pt`: teal publication badge height versus measured
+  publication text height.
+- `publication_icon_center_delta_pt`: publication icon centre versus badge
+  centre.
+- `mainsection_rule_center_delta_pt`: horizontal rules beside titles such as
+  `AWARDS` versus the measured title-box centre.
+- `divider_gap_delta_pt`: symmetry check for the vertical gaps around
+  right-column dividers.
+
+Run `python3 scripts/check_visual_metrics.py cv.log` after each PDF build to
+apply the current tolerances.
 
 ## Structure
 
