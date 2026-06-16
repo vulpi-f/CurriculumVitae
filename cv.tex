@@ -30,6 +30,22 @@
 \pdfpageheight=297.127mm
 \hypersetup{colorlinks=true,urlcolor=cvteal,linkcolor=cvteal}
 
+% Layout calibration notes:
+% - The design intentionally uses absolute TikZ coordinates to mirror the
+%   Canva/reference PDF.  When retouching, prefer changing only the named
+%   constants below before moving content coordinates.
+% - Side headings use a vector chevron drawn in TeX (not a bitmap) so its
+%   vertical centre can be aligned precisely with the heading baseline.
+% - Publication link badges compute their height from the text box and centre
+%   the icon with TikZ interpolation; keep this pattern for entries of any
+%   length.
+\newcommand{\sidearrowwidth}{5.05mm}
+\newcommand{\sidearrowheight}{5.05mm}
+\newcommand{\sidearrowbaseline}{-1.0mm}
+\newcommand{\sideheadinggap}{2.15mm}
+\newcommand{\pubiconwidth}{5.0mm}
+\newcommand{\pubicongap}{1.65mm}
+
 \newcommand{\bio}{\fontfamily{LinuxBiolinumT-LF}\selectfont}
 \newcommand{\sans}{\fontfamily{Montserrat-LF}\selectfont}
 \renewcommand{\familydefault}{LinuxBiolinumT-LF}
@@ -45,8 +61,13 @@
 \newcommand{\sideheading}[1]{%
   \vspace{0.65mm}%
   \noindent
-  \raisebox{-1.0mm}{\includegraphics[width=5.05mm]{CV_side_arrow.png}}%
-  \hspace{2.15mm}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
+  \raisebox{\sidearrowbaseline}{%
+    \begin{tikzpicture}[x=\sidearrowwidth,y=\sidearrowheight,baseline=(mid.base)]
+      \coordinate (mid) at (0.50,0.50);
+      \fill[cvteal,rounded corners=0.08mm]
+        (0.00,0.00) -- (0.64,0.50) -- (0.00,1.00) -- (0.26,0.50) -- cycle;
+    \end{tikzpicture}}%
+  \hspace{\sideheadinggap}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
   \vspace{0.65mm}%
 }
 
@@ -72,10 +93,11 @@
 
 \newcommand{\pubicon}[1]{%
   \begin{tikzpicture}[baseline=(current bounding box.north)]
-    \path[fill=cvteal,rounded corners=1.0mm] (0pt,0pt) rectangle (5.0mm,-#1);
+    \path[fill=cvteal,rounded corners=1.0mm] (0pt,0pt) rectangle (\pubiconwidth,-#1);
     \coordinate (icontop) at (2.5mm,0pt);
     \coordinate (iconbottom) at (2.5mm,-#1);
-    \node[inner sep=0pt] at ($(icontop)!0.5!(iconbottom)$) {\includegraphics[width=3.0mm]{CV_link_icon.png}};
+    \node[inner sep=0pt,text=white,font=\fontsize{7.2}{7.2}\selectfont]
+      at ($(icontop)!0.5!(iconbottom)$) {\faIcon{link}};
   \end{tikzpicture}%
 }
 
@@ -89,7 +111,7 @@
   \setlength{\pubboxheight}{\dimexpr\ht\pubtextbox+\dp\pubtextbox\relax}%
   \noindent
   \begin{minipage}[t][\pubboxheight][t]{5.5mm}\vspace{0pt}#1{\pubboxheight}\end{minipage}%
-  \hspace{1.65mm}%
+  \hspace{\pubicongap}%
   \usebox{\pubtextbox}%
   \par\vspace{0.55mm}
 }
