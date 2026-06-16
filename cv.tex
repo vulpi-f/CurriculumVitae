@@ -42,9 +42,22 @@
 \newcommand{\sidearrowwidth}{5.05mm}
 \newcommand{\sidearrowheight}{5.05mm}
 \newcommand{\sidearrowbaseline}{-1.0mm}
-\newcommand{\sideheadinggap}{2.15mm}
+\newcommand{\sideheadinggap}{2.75mm}
 \newcommand{\pubiconwidth}{5.0mm}
-\newcommand{\pubicongap}{1.65mm}
+\newcommand{\pubiconboxwidth}{6.1mm}
+\newcommand{\pubicongap}{1.55mm}
+\newcommand{\pubiconartwidth}{3.45mm}
+\newcommand{\pubtextwidth}{45.2mm}
+\newcommand{\publineheight}{15.25}
+\newcommand{\pubentrygap}{0.95mm}
+\newcommand{\beforepublicationsgap}{2.0mm}
+\newcommand{\dividergap}{1.40mm}
+\newcommand{\skillgroupvspace}{1.65mm}
+\newcommand{\langbarvspace}{0.85mm}
+\newlength{\sectiontitlegap}
+\newlength{\sectionrulewidth}
+\newsavebox{\sectiontitlebox}
+\setlength{\sectiontitlegap}{2.1mm}
 
 \newcommand{\bio}{\fontfamily{LinuxBiolinumT-LF}\selectfont}
 \newcommand{\sans}{\fontfamily{Montserrat-LF}\selectfont}
@@ -65,21 +78,21 @@
     \begin{tikzpicture}[x=\sidearrowwidth,y=\sidearrowheight,baseline=(mid.base)]
       \coordinate (mid) at (0.50,0.50);
       \fill[cvteal,rounded corners=0.08mm]
-        (0.00,0.00) -- (0.64,0.50) -- (0.00,1.00) -- (0.26,0.50) -- cycle;
+        (0.00,0.00) -- (1.00,0.50) -- (0.00,1.00) -- (0.35,0.50) -- cycle;
     \end{tikzpicture}}%
   \hspace{\sideheadinggap}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
   \vspace{0.65mm}%
 }
 
 \newcommand{\skillgroup}[2]{%
-  \vspace{0.35mm}
+  \vspace{\skillgroupvspace}
   {\centering{\sans\bfseries\fontsize{12.5}{13.2}\selectfont\color{cvteal}#1}\par}
-  \vspace{0.35mm}
+  \vspace{\skillgroupvspace}
   {\fontsize{8.9}{11.2}\selectfont #2\par}
 }
 
 \newcommand{\langbar}[3]{%
-  \vspace{0.35mm}
+  \vspace{\langbarvspace}
   {\fontsize{10.2}{11.0}\selectfont #1\par}
   \begin{tikzpicture}[x=1mm,y=1mm]
     \fill[cvlight,rounded corners=0.65mm] (0,0) rectangle (45.5,1.65);
@@ -96,8 +109,8 @@
     \path[fill=cvteal,rounded corners=1.0mm] (0pt,0pt) rectangle (\pubiconwidth,-#1);
     \coordinate (icontop) at (2.5mm,0pt);
     \coordinate (iconbottom) at (2.5mm,-#1);
-    \node[inner sep=0pt,text=white,font=\fontsize{7.2}{7.2}\selectfont]
-      at ($(icontop)!0.5!(iconbottom)$) {\faIcon{link}};
+    \node[inner sep=0pt]
+      at ($(icontop)!0.5!(iconbottom)$) {\includegraphics[width=\pubiconartwidth]{CV_link_icon.png}};
   \end{tikzpicture}%
 }
 
@@ -105,23 +118,36 @@
   \includegraphics[width=5.08mm]{CV_orcid_icon.png}%
 }
 
+\newcommand{\pubheading}[1]{%
+  \vspace{0.65mm}%
+  \noindent
+  \raisebox{\sidearrowbaseline}{\includegraphics[width=5.08mm]{CV_orcid_icon.png}}%
+  \hspace{\sideheadinggap}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
+  \vspace{0.65mm}%
+}
+
 \newcommand{\publication}[2]{%
   \sbox{\pubtextbox}{%
-    \begin{minipage}[t]{46.2mm}\vspace{0pt}\raggedright\fontsize{10.15}{12.35}\selectfont #2\end{minipage}}%
+    \begin{minipage}[t]{\pubtextwidth}\vspace{0pt}\raggedright\fontsize{10.15}{\publineheight}\selectfont #2\end{minipage}}%
   \setlength{\pubboxheight}{\dimexpr\ht\pubtextbox+\dp\pubtextbox\relax}%
   \noindent
-  \begin{minipage}[t][\pubboxheight][t]{5.5mm}\vspace{0pt}#1{\pubboxheight}\end{minipage}%
+  \begin{minipage}[t][\pubboxheight][t]{\pubiconboxwidth}\vspace{0pt}#1{\pubboxheight}\end{minipage}%
   \hspace{\pubicongap}%
   \usebox{\pubtextbox}%
-  \par\vspace{0.55mm}
+  \par\vspace{\pubentrygap}
 }
+
+\newcommand{\pubbreak}{\linebreak[4]}
 
 \newcommand{\mainsection}[1]{%
   \vspace{0.2mm}
-  \noindent\makebox[\linewidth][c]{%
-    \textcolor{cvteal}{\rule{0.25\linewidth}{0.65pt}}%
-    \hspace{2.1mm}{\color{cvteal}\wide{\fontsize{17.2}{18}\selectfont #1}}%
-    \hspace{2.1mm}\textcolor{cvteal}{\rule{0.25\linewidth}{0.65pt}}%
+  \sbox{\sectiontitlebox}{\color{cvteal}\wide{\fontsize{17.2}{18}\selectfont #1}}%
+  \setlength{\sectionrulewidth}{\dimexpr\linewidth-\wd\sectiontitlebox-2\sectiontitlegap\relax}%
+  \setlength{\sectionrulewidth}{0.5\sectionrulewidth}%
+  \noindent\makebox[\linewidth][l]{%
+    \textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}%
+    \hspace{\sectiontitlegap}\usebox{\sectiontitlebox}%
+    \hspace{\sectiontitlegap}\textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}%
   }\par\vspace{2.9mm}
 }
 
@@ -136,7 +162,7 @@
 }
 
 \newcommand{\divider}{%
-  \vspace{1.35mm}\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\vspace{1.45mm}
+  \vspace{\dividergap}\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\vspace{\dividergap}
 }
 
 \newcommand{\cvitems}{%
@@ -179,7 +205,7 @@
   \node[anchor=north west,inner sep=0pt] at (2.35,39.2) {%
     \begin{minipage}[t]{55.0mm}
       \sideheading{ABOUT ME}
-      {\fontsize{9.85}{12.05}\selectfont
+      {\fontsize{9.85}{12.75}\selectfont
       Daring and versatile, I firmly believe\\
       that attaining successful outcomes\\
       relies on both the ability to ask\\
@@ -217,13 +243,14 @@
       \langbar{English}{C 1}{38.0}
       \langbar{Deutsch}{A 2}{15.0}
 
-      \sideheading{PUBLICATIONS}
-      \publication{\orcidicon}{Kalman Supervised Network for\\ improved Model Predictions.}
-      \publication{\pubicon}{Recurrent and convolutional\\ NN for deep terrain\\ classification by autonomous\\ robots.}
-      \publication{\pubicon}{An RGB-D multi-view\\ perspective for autonomous\\ agricultural robots.}
-      \publication{\pubicon}{On the role of feature and\\ signal selection for terrain\\ learning in planetary\\ exploration.}
-      \publication{\pubicon}{Usability Study of WISE for\\ Movement Assessment and\\ Exercise.}
-      \publication{\pubicon}{Wearable Inertial Sensors for\\ Range of Motion Assessment\\ (WISE).}
+      \vspace{\beforepublicationsgap}
+      \pubheading{PUBLICATIONS}
+      \publication{\pubicon}{Kalman Supervised Network for\pubbreak improved Model Predictions.}
+      \publication{\pubicon}{Recurrent and convolutional\pubbreak NN for deep terrain\pubbreak classification by autonomous\pubbreak robots.}
+      \publication{\pubicon}{An RGB-D multi-view\pubbreak perspective for autonomous\pubbreak agricultural robots.}
+      \publication{\pubicon}{On the role of feature and\pubbreak signal selection for terrain\pubbreak learning in planetary\pubbreak exploration.}
+      \publication{\pubicon}{Usability Study of WISE for\pubbreak Movement Assessment and\pubbreak Exercise.}
+      \publication{\pubicon}{Wearable Inertial Sensors for\pubbreak Range of Motion Assessment\pubbreak (WISE).}
     \end{minipage}};
 
   \node[anchor=north west,inner sep=0pt] at (63.4,38.8) {%

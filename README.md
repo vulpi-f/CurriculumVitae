@@ -32,9 +32,27 @@ Current high-impact controls in `cv.tex`:
 
 - `\sidearrowwidth`, `\sidearrowheight`, `\sidearrowbaseline`,
   `\sideheadinggap`: left-column chevron size, baseline, and heading spacing.
-- `\pubiconwidth`, `\pubicongap`: publication badge width and text separation.
+- `\sectiontitlegap`: gap between the main-column section titles and the
+  horizontal rules.  `\mainsection` measures the title and computes both rule
+  widths from `\linewidth`, so the rule pair is anchored to the right-column
+  text block.
+- `\dividergap`: symmetric vertical spacing above and below the right-column
+  entry dividers.
+- `\skillgroupvspace`, `\langbarvspace`, `\beforepublicationsgap`: left-column
+  vertical rhythm controls for the digital-skills groups, language bars, and
+  the gap before the publications heading.
+- `\pubiconwidth`, `\pubiconboxwidth`, `\pubicongap`, `\pubiconartwidth`,
+  `\pubtextwidth`, `\publineheight`, `\pubentrygap`: publication badge, text,
+  line-height, and inter-entry spacing controls.
 - Header/content anchor coordinates inside the root `tikzpicture`: use these
   only after the local size controls above are exhausted.
+
+Publication line breaks are encoded with `\pubbreak`, not raw `\\`.  The
+reference PDF requires controlled line cuts that cannot be reproduced by one
+single natural text width for every publication title; using the semantic macro
+keeps those breaks searchable and easy to retune.  The ORCID asset marks the
+`PUBLICATIONS` heading via `\pubheading`; each publication row uses the teal
+link badge with `FIGURES/CV_link_icon.png`.
 
 ## Icon/package notes
 
@@ -49,6 +67,9 @@ Online package checks performed for icon matching:
 - The side-section arrow is now drawn as a TikZ vector chevron instead of a PNG;
   this keeps the arrow crisp and makes baseline/shape retouching local to
   `\sideheading`.
+- The publication link icon uses `FIGURES/CV_link_icon.png` inside a dynamic
+  TikZ badge, because the reference uses the yellow-green link artwork rather
+  than a plain white Font Awesome glyph.
 
 If a future editor installs extra LaTeX packages and wants a font-based ORCID
 icon, test `academicons` or the ORCID icon available in newer Font Awesome
