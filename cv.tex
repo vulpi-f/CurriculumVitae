@@ -45,10 +45,8 @@
 \newcommand{\sideheading}[1]{%
   \vspace{0.65mm}%
   \noindent
-  \begin{tikzpicture}[x=1mm,y=1mm,baseline=-1.6mm]
-    \fill[cvteal] (0,0) -- (5.7,3.6) -- (0,7.2) -- (2.0,3.6) -- cycle;
-  \end{tikzpicture}%
-  \hspace{1.75mm}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
+  \raisebox{-1.0mm}{\includegraphics[width=5.05mm]{CV_side_arrow.png}}%
+  \hspace{2.15mm}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
   \vspace{0.65mm}%
 }
 
@@ -69,26 +67,31 @@
   \hfill{\fontsize{10.4}{11.0}\selectfont #2}\par
 }
 
-\newcommand{\pubicon}{%
-  \begin{tikzpicture}[x=1mm,y=1mm]
-    \fill[cvteal,rounded corners=1.1mm] (0,0) rectangle (5.8,9.2);
-    \node[text=cvorcid,font=\fontsize{6.8}{6.8}\selectfont] at (2.9,4.6) {\faIcon{link}};
+\newsavebox{\pubtextbox}
+\newlength{\pubboxheight}
+
+\newcommand{\pubicon}[1]{%
+  \begin{tikzpicture}[baseline=(current bounding box.north)]
+    \path[fill=cvteal,rounded corners=1.0mm] (0pt,0pt) rectangle (5.0mm,-#1);
+    \coordinate (icontop) at (2.5mm,0pt);
+    \coordinate (iconbottom) at (2.5mm,-#1);
+    \node[inner sep=0pt] at ($(icontop)!0.5!(iconbottom)$) {\includegraphics[width=3.0mm]{CV_link_icon.png}};
   \end{tikzpicture}%
 }
 
-\newcommand{\orcidicon}{%
-  \begin{tikzpicture}[x=1mm,y=1mm,baseline=-2.4mm]
-    \fill[cvorcid] (2.9,2.9) circle (2.9);
-    \node[text=white,font=\sans\bfseries\fontsize{5.2}{5.2}\selectfont] at (2.9,2.9) {iD};
-  \end{tikzpicture}%
+\newcommand{\orcidicon}[1]{%
+  \includegraphics[width=5.08mm]{CV_orcid_icon.png}%
 }
 
 \newcommand{\publication}[2]{%
+  \sbox{\pubtextbox}{%
+    \begin{minipage}[t]{46.2mm}\vspace{0pt}\raggedright\fontsize{10.15}{12.35}\selectfont #2\end{minipage}}%
+  \setlength{\pubboxheight}{\dimexpr\ht\pubtextbox+\dp\pubtextbox\relax}%
   \noindent
-  \begin{minipage}[t]{6.9mm}\vspace{0pt}#1\end{minipage}%
-  \hspace{1.0mm}%
-  \begin{minipage}[t]{46.2mm}\vspace{0pt}\raggedright\fontsize{10.15}{14.15}\selectfont #2\end{minipage}%
-  \par\vspace{0.65mm}
+  \begin{minipage}[t][\pubboxheight][t]{5.5mm}\vspace{0pt}#1{\pubboxheight}\end{minipage}%
+  \hspace{1.65mm}%
+  \usebox{\pubtextbox}%
+  \par\vspace{0.55mm}
 }
 
 \newcommand{\mainsection}[1]{%
@@ -111,7 +114,7 @@
 }
 
 \newcommand{\divider}{%
-  \vspace{1.9mm}\noindent\textcolor{cvteal}{\rule{\linewidth}{0.55pt}}\par\vspace{1.9mm}
+  \vspace{1.35mm}\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\vspace{1.45mm}
 }
 
 \newcommand{\cvitems}{%
