@@ -31,7 +31,10 @@ assets/spacing controls (`74f088f`), so future retouching should be incremental:
 Current high-impact controls in `cv.tex`:
 
 - `\sidearrowwidth`, `\sidearrowheight`, `\sidearrowbaseline`,
-  `\sideheadinggap`: left-column chevron size, baseline, and heading spacing.
+  `\sidearrowboxwidth`, `\sidearrowtrimleft`, `\sidearrowtrimbottom`,
+  `\sidearrowtrimright`, `\sidearrowtrimtop`, `\sideheadinggap`: left-column
+  chevron artwork size, fixed marker box, transparent-canvas crop, baseline, and
+  heading spacing.
 - `\sectiontitlegap`: gap between the main-column section titles and the
   horizontal rules.  `\mainsection` measures the title and computes both rule
   widths from `\linewidth`, so the rule pair is anchored to the right-column
@@ -42,8 +45,13 @@ Current high-impact controls in `cv.tex`:
   vertical rhythm controls for the digital-skills groups, language bars, and
   the gap before the publications heading.
 - `\pubiconwidth`, `\pubiconboxwidth`, `\pubicongap`, `\pubiconartwidth`,
-  `\pubtextwidth`, `\publineheight`, `\pubentrygap`: publication badge, text,
-  line-height, and inter-entry spacing controls.
+  `\pubicontrimleft`, `\pubicontrimbottom`, `\pubicontrimright`,
+  `\pubicontrimtop`, `\pubtextwidth`, `\publineheight`, `\pubentrygap`:
+  publication badge, transparent-canvas crop, text, line-height, and inter-entry
+  spacing controls.
+- `\orcidboxwidth`, `\orcidartwidth`, `\orcidtrimleft`, `\orcidtrimbottom`,
+  `\orcidtrimright`, `\orcidtrimtop`, `\orcidbaseline`: ORCID marker box,
+  artwork size, crop, and vertical centring for the publications heading.
 - Header/content anchor coordinates inside the root `tikzpicture`: use these
   only after the local size controls above are exhausted.
 
@@ -64,12 +72,14 @@ Online package checks performed for icon matching:
 - CTAN `academicons` provides academic-profile icons, including ORCID.  The
   current source keeps the existing `FIGURES/CV_orcid_icon.png` asset because it
   matches the reference colour/shape closely without requiring a new TeX package.
-- The side-section arrow is now drawn as a TikZ vector chevron instead of a PNG;
-  this keeps the arrow crisp and makes baseline/shape retouching local to
-  `\sideheading`.
-- The publication link icon uses `FIGURES/CV_link_icon.png` inside a dynamic
-  TikZ badge, because the reference uses the yellow-green link artwork rather
-  than a plain white Font Awesome glyph.
+- The side-section arrow uses the high-resolution transparent
+  `FIGURES/CV_side_arrow.png` asset.  The `\sidearrowtrim...` constants clip
+  away transparent canvas before the icon is placed in its fixed marker box, so
+  replacing the PNG does not change the text offset.
+- The publication link icon uses the high-resolution transparent
+  `FIGURES/CV_link_icon.png` inside a dynamic TikZ badge.  The
+  `\pubicontrim...` constants clip the icon canvas and the badge centres the
+  visible artwork against each publication text box.
 
 If a future editor installs extra LaTeX packages and wants a font-based ORCID
 icon, test `academicons` or the ORCID icon available in newer Font Awesome

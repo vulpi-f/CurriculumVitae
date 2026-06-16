@@ -34,19 +34,35 @@
 % - The design intentionally uses absolute TikZ coordinates to mirror the
 %   Canva/reference PDF.  When retouching, prefer changing only the named
 %   constants below before moving content coordinates.
-% - Side headings use a vector chevron drawn in TeX (not a bitmap) so its
-%   vertical centre can be aligned precisely with the heading baseline.
+% - High-resolution PNG icon assets are trimmed at include time so transparent
+%   canvas never affects spacing or vertical centring.
 % - Publication link badges compute their height from the text box and centre
-%   the icon with TikZ interpolation; keep this pattern for entries of any
-%   length.
+%   the trimmed icon with TikZ interpolation; keep this pattern for entries of
+%   any length.
 \newcommand{\sidearrowwidth}{5.05mm}
 \newcommand{\sidearrowheight}{5.05mm}
+\newcommand{\sidearrowboxwidth}{5.05mm}
+\newcommand{\sidearrowtrimleft}{59.37bp}
+\newcommand{\sidearrowtrimbottom}{190.74bp}
+\newcommand{\sidearrowtrimright}{59.37bp}
+\newcommand{\sidearrowtrimtop}{174.74bp}
 \newcommand{\sidearrowbaseline}{-1.0mm}
 \newcommand{\sideheadinggap}{2.75mm}
 \newcommand{\pubiconwidth}{5.0mm}
 \newcommand{\pubiconboxwidth}{6.1mm}
 \newcommand{\pubicongap}{1.55mm}
 \newcommand{\pubiconartwidth}{3.45mm}
+\newcommand{\pubicontrimleft}{24.42bp}
+\newcommand{\pubicontrimbottom}{133.05bp}
+\newcommand{\pubicontrimright}{24.42bp}
+\newcommand{\pubicontrimtop}{170.11bp}
+\newcommand{\orcidboxwidth}{5.05mm}
+\newcommand{\orcidartwidth}{5.08mm}
+\newcommand{\orcidtrimleft}{0bp}
+\newcommand{\orcidtrimbottom}{0bp}
+\newcommand{\orcidtrimright}{0bp}
+\newcommand{\orcidtrimtop}{0bp}
+\newcommand{\orcidbaseline}{-1.0mm}
 \newcommand{\pubtextwidth}{45.2mm}
 \newcommand{\publineheight}{15.25}
 \newcommand{\pubentrygap}{0.95mm}
@@ -74,12 +90,15 @@
 \newcommand{\sideheading}[1]{%
   \vspace{0.65mm}%
   \noindent
-  \raisebox{\sidearrowbaseline}{%
-    \begin{tikzpicture}[x=\sidearrowwidth,y=\sidearrowheight,baseline=(mid.base)]
-      \coordinate (mid) at (0.50,0.50);
-      \fill[cvteal,rounded corners=0.08mm]
-        (0.00,0.00) -- (1.00,0.50) -- (0.00,1.00) -- (0.35,0.50) -- cycle;
-    \end{tikzpicture}}%
+  \makebox[\sidearrowboxwidth][c]{%
+    \raisebox{\sidearrowbaseline}{%
+      \includegraphics[
+        width=\sidearrowwidth,
+        height=\sidearrowheight,
+        keepaspectratio,
+        trim=\sidearrowtrimleft{} \sidearrowtrimbottom{} \sidearrowtrimright{} \sidearrowtrimtop{},
+        clip
+      ]{CV_side_arrow.png}}}%
   \hspace{\sideheadinggap}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
   \vspace{0.65mm}%
 }
@@ -110,18 +129,29 @@
     \coordinate (icontop) at (2.5mm,0pt);
     \coordinate (iconbottom) at (2.5mm,-#1);
     \node[inner sep=0pt]
-      at ($(icontop)!0.5!(iconbottom)$) {\includegraphics[width=\pubiconartwidth]{CV_link_icon.png}};
+      at ($(icontop)!0.5!(iconbottom)$) {%
+        \includegraphics[
+          width=\pubiconartwidth,
+          trim=\pubicontrimleft{} \pubicontrimbottom{} \pubicontrimright{} \pubicontrimtop{},
+          clip
+        ]{CV_link_icon.png}};
   \end{tikzpicture}%
 }
 
-\newcommand{\orcidicon}[1]{%
-  \includegraphics[width=5.08mm]{CV_orcid_icon.png}%
+\newcommand{\orcidicon}{%
+  \makebox[\orcidboxwidth][c]{%
+    \raisebox{\orcidbaseline}{%
+      \includegraphics[
+        width=\orcidartwidth,
+        trim=\orcidtrimleft{} \orcidtrimbottom{} \orcidtrimright{} \orcidtrimtop{},
+        clip
+      ]{CV_orcid_icon.png}}}%
 }
 
 \newcommand{\pubheading}[1]{%
   \vspace{0.65mm}%
   \noindent
-  \raisebox{\sidearrowbaseline}{\includegraphics[width=5.08mm]{CV_orcid_icon.png}}%
+  \orcidicon%
   \hspace{\sideheadinggap}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
   \vspace{0.65mm}%
 }
