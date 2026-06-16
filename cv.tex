@@ -39,42 +39,42 @@
 % - Publication link badges compute their height from the text box and centre
 %   the trimmed icon with TikZ interpolation; keep this pattern for entries of
 %   any length.
-\newcommand{\sidearrowwidth}{5.05mm}
-\newcommand{\sidearrowheight}{5.05mm}
-\newcommand{\sidearrowboxwidth}{5.05mm}
+\newcommand{\sidearrowwidth}{5.20mm}
+\newcommand{\sidearrowheight}{5.20mm}
+\newcommand{\sidearrowboxwidth}{5.45mm}
 \newcommand{\sidearrowtrimleft}{59.37bp}
 \newcommand{\sidearrowtrimbottom}{190.74bp}
 \newcommand{\sidearrowtrimright}{59.37bp}
 \newcommand{\sidearrowtrimtop}{174.74bp}
-\newcommand{\sidearrowbaseline}{-1.0mm}
-\newcommand{\sideheadinggap}{2.75mm}
-\newcommand{\pubiconwidth}{5.0mm}
-\newcommand{\pubiconboxwidth}{6.1mm}
-\newcommand{\pubicongap}{1.55mm}
-\newcommand{\pubiconartwidth}{3.45mm}
+\newcommand{\sidearrowbaseline}{-0.84mm}
+\newcommand{\sideheadinggap}{2.40mm}
+\newcommand{\pubiconwidth}{5.25mm}
+\newcommand{\pubiconboxwidth}{5.95mm}
+\newcommand{\pubicongap}{1.28mm}
+\newcommand{\pubiconartwidth}{3.52mm}
 \newcommand{\pubicontrimleft}{24.42bp}
 \newcommand{\pubicontrimbottom}{133.05bp}
 \newcommand{\pubicontrimright}{24.42bp}
 \newcommand{\pubicontrimtop}{170.11bp}
-\newcommand{\orcidboxwidth}{5.05mm}
-\newcommand{\orcidartwidth}{5.08mm}
+\newcommand{\orcidboxwidth}{5.45mm}
+\newcommand{\orcidartwidth}{5.18mm}
 \newcommand{\orcidtrimleft}{0bp}
 \newcommand{\orcidtrimbottom}{0bp}
 \newcommand{\orcidtrimright}{0bp}
 \newcommand{\orcidtrimtop}{0bp}
-\newcommand{\orcidbaseline}{-1.0mm}
+\newcommand{\orcidbaseline}{-0.82mm}
 \newcommand{\pubtextwidth}{45.2mm}
 \newcommand{\publineheight}{15.25}
-\newcommand{\pubentrygap}{0.95mm}
-\newcommand{\beforepublicationsgap}{2.0mm}
-\newcommand{\dividergap}{1.40mm}
-\newcommand{\skillgroupvspace}{1.65mm}
-\newcommand{\langbarvspace}{0.85mm}
+\newcommand{\pubentrygap}{0.80mm}
+\newcommand{\beforepublicationsgap}{1.70mm}
+\newcommand{\dividergap}{1.22mm}
+\newcommand{\skillgroupvspace}{1.45mm}
+\newcommand{\langbarvspace}{0.72mm}
 \newlength{\sectiontitlegap}
 \newlength{\sectionrulewidth}
 \newlength{\sectionruleraise}
 \newsavebox{\sectiontitlebox}
-\setlength{\sectiontitlegap}{2.1mm}
+\setlength{\sectiontitlegap}{1.85mm}
 \newlength{\pubiconcenterx}
 \setlength{\pubiconcenterx}{\dimexpr\pubiconwidth/2\relax}
 
@@ -99,7 +99,7 @@
 }
 
 \newcommand{\sideheading}[1]{%
-  \vspace{0.65mm}%
+  \vspace{0.52mm}%
   \noindent
   \makebox[\sidearrowboxwidth][c]{%
     \raisebox{\sidearrowbaseline}{%
@@ -111,7 +111,7 @@
         clip
       ]{CV_side_arrow.png}}}%
   \hspace{\sideheadinggap}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
-  \vspace{0.65mm}%
+  \vspace{0.52mm}%
 }
 
 \newcommand{\skillgroup}[2]{%
@@ -160,11 +160,11 @@
 }
 
 \newcommand{\pubheading}[1]{%
-  \vspace{0.65mm}%
+  \vspace{0.52mm}%
   \noindent
   \orcidicon%
   \hspace{\sideheadinggap}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
-  \vspace{0.65mm}%
+  \vspace{0.52mm}%
 }
 
 \newcommand{\publication}[2]{%
@@ -183,7 +183,7 @@
 \newcommand{\pubbreak}{\linebreak[4]}
 
 \newcommand{\mainsection}[1]{%
-  \vspace{0.2mm}
+  \vspace{0.05mm}
   \sbox{\sectiontitlebox}{\color{cvteal}\wide{\fontsize{17.2}{18}\selectfont #1}}%
   \setlength{\sectionrulewidth}{\dimexpr\linewidth-\wd\sectiontitlebox-2\sectiontitlegap\relax}%
   \setlength{\sectionrulewidth}{0.5\sectionrulewidth}%
@@ -193,16 +193,16 @@
     \raisebox{\sectionruleraise}{\textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}}%
     \hspace{\sectiontitlegap}\usebox{\sectiontitlebox}%
     \hspace{\sectiontitlegap}\raisebox{\sectionruleraise}{\textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}}%
-  }\par\vspace{2.9mm}
+  }\par\vspace{2.55mm}
 }
 
 \newcommand{\entry}[5]{%
   \noindent
   {\fontsize{12.4}{13.4}\selectfont\bfseries #1}%
   \hfill{\fontsize{11.0}{12.0}\selectfont #2}\par
-  \vspace{0.7mm}
+  \vspace{0.55mm}
   {\fontsize{11.0}{12.0}\selectfont #3\textcolor{cvtext}{\ - #4}}\par
-  \vspace{0.8mm}
+  \vspace{0.65mm}
   {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent #5\par}
 }
 
@@ -219,7 +219,7 @@
 \newcommand{\awardentry}[3]{%
   \noindent{\fontsize{11.0}{12.0}\selectfont #1}%
   \hfill{\fontsize{11.0}{12.0}\selectfont #2}\par
-  \vspace{0.8mm}
+  \vspace{0.65mm}
   {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent #3\par}
 }
 
@@ -239,17 +239,17 @@
     \node[anchor=north west,inner sep=0pt] at (-3.10,0.80) {\includegraphics[width=67.53mm]{CV_picture_canva.png}};
   \end{scope}
 
-  \node[anchor=north,text=white,font=\sans\bfseries\fontsize{30.2}{32.3}\selectfont] at (135,3.6) {Fabio Vulpi};
-  \node[anchor=north,text=white,font=\sans\bfseries\fontsize{14.4}{15.3}\selectfont] at (135,14.2) {Ph.D. in Mechanical Engineering and Management};
+  \node[anchor=north,text=white,font=\sans\bfseries\fontsize{30.2}{32.3}\selectfont] at (135,3.35) {Fabio Vulpi};
+  \node[anchor=north,text=white,font=\sans\bfseries\fontsize{14.4}{15.3}\selectfont] at (135,13.95) {Ph.D. in Mechanical Engineering and Management};
 
-  \node[anchor=west] at (63.5,25.6) {\headeritem{phone}{tel:+393803485030}{+39 3803485030}};
-  \node[anchor=west] at (121.0,25.6) {\headeritem{map-marker-alt}{}{70124, Bari (BA), Italy}};
-  \node[anchor=west] at (189.0,25.6) {\headeritem{calendar-alt}{}{21/12/1995}};
-  \node[anchor=west] at (63.5,31.8) {\headeritem{linkedin}{https://linkedin.com/in/fabio-vulpi}{\headerlink{https://linkedin.com/in/fabio-vulpi}{linkedin.com/in/fabio-vulpi}}};
-  \node[anchor=west] at (121.0,31.8) {\headeritem{github}{https://github.com/vulpi-f}{\headerlink{https://github.com/vulpi-f}{github.com/vulpi-f}}};
-  \node[anchor=west] at (169.8,31.8) {\headeritem{envelope}{mailto:vulpi.fabio@gmail.com}{vulpi.fabio@gmail.com}};
+  \node[anchor=west] at (63.8,25.25) {\headeritem{phone}{tel:+393803485030}{+39 3803485030}};
+  \node[anchor=west] at (121.2,25.25) {\headeritem{map-marker-alt}{}{70124, Bari (BA), Italy}};
+  \node[anchor=west] at (188.7,25.25) {\headeritem{calendar-alt}{}{21/12/1995}};
+  \node[anchor=west] at (63.8,31.55) {\headeritem{linkedin}{https://linkedin.com/in/fabio-vulpi}{\headerlink{https://linkedin.com/in/fabio-vulpi}{linkedin.com/in/fabio-vulpi}}};
+  \node[anchor=west] at (121.2,31.55) {\headeritem{github}{https://github.com/vulpi-f}{\headerlink{https://github.com/vulpi-f}{github.com/vulpi-f}}};
+  \node[anchor=west] at (169.6,31.55) {\headeritem{envelope}{mailto:vulpi.fabio@gmail.com}{vulpi.fabio@gmail.com}};
 
-  \node[anchor=north west,inner sep=0pt] at (2.35,39.2) {%
+  \node[anchor=north west,inner sep=0pt] at (2.65,38.95) {%
     \begin{minipage}[t]{55.0mm}
       \sideheading{ABOUT ME}
       {\fontsize{9.85}{12.75}\selectfont
@@ -300,7 +300,7 @@
       \publication{\pubicon}{Wearable Inertial Sensors for\pubbreak Range of Motion Assessment\pubbreak (WISE).}
     \end{minipage}};
 
-  \node[anchor=north west,inner sep=0pt] at (63.4,38.8) {%
+  \node[anchor=north west,inner sep=0pt] at (63.7,38.65) {%
     \begin{minipage}[t]{143.8mm}
       \mainsection{WORK EXPERIENCE}
       \entry{Experienced Consultant}{10/2024 - current}
