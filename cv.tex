@@ -34,33 +34,50 @@
 % - The design intentionally uses absolute TikZ coordinates to mirror the
 %   Canva/reference PDF.  When retouching, prefer changing only the named
 %   constants below before moving content coordinates.
-% - Vertical distribution is driven by one elastic object gap in both columns.
-%   Keep fixed gaps only for tightly related micro-pairs such as a skill title
-%   and its table, or a language label and its bar.
+% - Vertical distribution is driven by column-specific elastic object gaps.
+%   The main column and sidebar intentionally have separate controls, because
+%   their content density changes independently.
 % - Publication link badges compute their height from the text box. The link
 %   artwork is centered in a square inner box whose center is the badge center.
 \newlength{\cvcontentbottom}
+\newlength{\cvsidebarframetop}
+\newlength{\cvsideframetopinset}
 \newlength{\cvsidebarcontenttop}
 \newlength{\cvmaincontenttop}
 \newlength{\cvsidebarcontentheight}
 \newlength{\cvmaincontentheight}
+\newcommand{\cvsidebarframetopvalue}{39.02}
+\newcommand{\cvsideframetopinsetvalue}{2.00}
+\pgfmathsetmacro{\cvsidebarcontenttopvalue}{\cvsidebarframetopvalue+\cvsideframetopinsetvalue}
 \setlength{\cvcontentbottom}{292.55mm}
-\setlength{\cvsidebarcontenttop}{38.95mm}
+\setlength{\cvsidebarframetop}{\cvsidebarframetopvalue mm}
+\setlength{\cvsideframetopinset}{\cvsideframetopinsetvalue mm}
+\setlength{\cvsidebarcontenttop}{\cvsidebarcontenttopvalue mm}
 \setlength{\cvmaincontenttop}{38.65mm}
 \setlength{\cvsidebarcontentheight}{\dimexpr\cvcontentbottom-\cvsidebarcontenttop\relax}
 \setlength{\cvmaincontentheight}{\dimexpr\cvcontentbottom-\cvmaincontenttop\relax}
-\newcommand{\cvobjectgap}{0pt plus 1fill}
-\newcommand{\cvdetailgap}{0.72mm}
-\newcommand{\cvstretchgap}{\par\vspace{\cvobjectgap}}
-\newcommand{\cvmainflowgap}{\cvstretchgap}
-\newcommand{\sidearrowwidth}{5.20mm}
-\newcommand{\sidearrowheight}{5.20mm}
+\newcommand{\cvmainobjectgap}{0pt plus 1fill}
+\newcommand{\cvsideobjectgap}{0pt plus 1fill}
+\newcommand{\cvmainflowgap}{\par\vspace{\cvmainobjectgap}}
+\newcommand{\cvsideflowgap}{\par\vspace{\cvsideobjectgap}}
+% Sidebar tuning knobs:
+% - \cvsideframetopinsetvalue moves ABOUT ME down/up from the top frame line.
+% - \cvsideobjectgap distributes macro objects in the sidebar.
+% - \cvsidebeforepublicationsgap adjusts the elastic gap above PUBLICATIONS.
+% - The remaining \cvside... and \cvskill... constants tune sidebar micro-gaps.
+\newcommand{\cvsidebeforepublicationsgap}{\par\vspace{0pt plus 1.10fill}}
+\newcommand{\cvsideheadingcontentgap}{0.82mm}
+\newcommand{\cvsoftskillitemsep}{0.28mm}
+\newcommand{\cvsoftskilltopsep}{0pt}
+\newcommand{\cvskillgroupvspace}{0.68mm}
+\newcommand{\cvskillrowgap}{0.22mm}
+\newcommand{\cvlangbarvspace}{0.68mm}
+\newcommand{\cvsidepubentrygap}{\cvsideobjectgap}
 \newcommand{\sidearrowboxwidth}{5.45mm}
 \newcommand{\sidearrowtrimleft}{59.37bp}
 \newcommand{\sidearrowtrimbottom}{190.74bp}
 \newcommand{\sidearrowtrimright}{59.37bp}
 \newcommand{\sidearrowtrimtop}{174.74bp}
-\newcommand{\sidearrowbaseline}{-0.84mm}
 \newcommand{\sideheadinggap}{2.40mm}
 \newcommand{\pubiconwidth}{5.25mm}
 \newcommand{\pubiconboxwidth}{5.95mm}
@@ -81,16 +98,16 @@
 \newcommand{\orcidbaseline}{-0.82mm}
 \newcommand{\pubtextwidth}{45.2mm}
 \newcommand{\publineheight}{13.85}
-\newcommand{\pubentrygap}{\cvobjectgap}
-\newcommand{\beforepublicationsgap}{0pt}
+\newcommand{\pubentrygap}{\cvsidepubentrygap}
 \newcommand{\dividergap}{1.22mm}
 \newcommand{\entrylinegap}{0.60mm}
-\newcommand{\skillgroupvspace}{\cvdetailgap}
-\newcommand{\langbarvspace}{\cvdetailgap}
 \newlength{\sectiontitlegap}
 \newlength{\sectionrulewidth}
 \newlength{\sectionruleraise}
 \newsavebox{\sectiontitlebox}
+\newsavebox{\sideheadingtextbox}
+\newsavebox{\sidearrowtextbox}
+\newlength{\sideheadingheight}
 \setlength{\sectiontitlegap}{1.85mm}
 \newlength{\pubiconcenterx}
 \setlength{\pubiconcenterx}{\dimexpr\pubiconwidth/2\relax}
@@ -117,32 +134,38 @@
 \newcommand{\cvframeconstraintmetrics}{%
   \cvmetricdim{sidebar_content_bottom_delta_pt}{\cvsidebarcontenttop+\cvsidebarcontentheight-\cvcontentbottom}%
   \cvmetricdim{main_content_bottom_delta_pt}{\cvmaincontenttop+\cvmaincontentheight-\cvcontentbottom}%
+  \cvmetricdim{sidebar_top_inset_pt}{\cvsidebarcontenttop-\cvsidebarframetop}%
+  \cvmetricdim{sidebar_top_inset_delta_pt}{\cvsidebarcontenttop-\cvsidebarframetop-\cvsideframetopinset}%
 }
 
 \newcommand{\sideheading}[1]{%
-  \noindent
-  \makebox[\sidearrowboxwidth][c]{%
-    \raisebox{\sidearrowbaseline}{%
+  \sbox{\sideheadingtextbox}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont\strut #1}%
+  \setlength{\sideheadingheight}{\dimexpr\ht\sideheadingtextbox+\dp\sideheadingtextbox\relax}%
+  \sbox{\sidearrowtextbox}{%
+    \raisebox{-\dp\sideheadingtextbox}{%
       \includegraphics[
-        width=\sidearrowwidth,
-        height=\sidearrowheight,
+        height=\sideheadingheight,
         keepaspectratio,
         trim=\sidearrowtrimleft{} \sidearrowtrimbottom{} \sidearrowtrimright{} \sidearrowtrimtop{},
         clip
       ]{CV_side_arrow.png}}}%
-  \hspace{\sideheadinggap}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
-  \cvstretchgap
+  \cvmetricdim{sideheading_arrow_height_delta_pt}{\ht\sidearrowtextbox+\dp\sidearrowtextbox-\sideheadingheight}%
+  \nointerlineskip
+  \noindent
+  \makebox[\sidearrowboxwidth][c]{\usebox{\sidearrowtextbox}}%
+  \hspace{\sideheadinggap}\usebox{\sideheadingtextbox}\par
+  \vspace{\cvsideheadingcontentgap}%
 }
 
 \newcommand{\skillgroup}[2]{%
   {\centering{\sans\bfseries\fontsize{12.5}{13.2}\selectfont\color{cvteal}#1}\par}
-  \vspace{\skillgroupvspace}
+  \vspace{\cvskillgroupvspace}
   {\fontsize{8.9}{11.2}\selectfont #2\par}
 }
 
 \newcommand{\langbar}[3]{%
   {\fontsize{10.2}{11.0}\selectfont #1\par}
-  \vspace{\langbarvspace}
+  \vspace{\cvlangbarvspace}
   \begin{tikzpicture}[x=1mm,y=1mm]
     \fill[cvlight,rounded corners=0.65mm] (0,0) rectangle (45.5,1.65);
     \fill[cvteal,rounded corners=0.65mm] (0,0) rectangle (#3,1.65);
@@ -183,10 +206,11 @@
 }
 
 \newcommand{\pubheading}[1]{%
+  \nointerlineskip
   \noindent
   \orcidicon%
   \hspace{\sideheadinggap}{\sans\bfseries\fontsize{14.5}{15.5}\selectfont #1}\par
-  \cvstretchgap
+  \vspace{\cvsideheadingcontentgap}%
 }
 
 \newcommand{\publication}[2]{%
@@ -277,7 +301,7 @@
   \node[anchor=west] at (121.2,31.55) {\headeritem{github}{https://github.com/vulpi-f}{\headerlink{https://github.com/vulpi-f}{github.com/vulpi-f}}};
   \node[anchor=west] at (169.6,31.55) {\headeritem{envelope}{mailto:vulpi.fabio@gmail.com}{vulpi.fabio@gmail.com}};
 
-  \node[anchor=north west,inner sep=0pt] at (2.65,38.95) {%
+  \node[anchor=north west,inner sep=0pt] at (2.65,\cvsidebarcontenttopvalue) {%
     \begin{minipage}[t][\cvsidebarcontentheight][s]{55.0mm}
       \sideheading{ABOUT ME}
       {\fontsize{9.85}{12.75}\selectfont
@@ -287,46 +311,45 @@
       pertinent questions and the\\
       commitment to finding the answers.\par}
 
-      \cvstretchgap
+      \cvsideflowgap
       \sideheading{SOFT-SKILLS}
       {\fontsize{9.9}{11.1}\selectfont
-      \begin{itemize}[leftmargin=5.2mm,itemsep=0.15mm,topsep=0mm,parsep=0pt]
+      \begin{itemize}[leftmargin=5.2mm,itemsep=\cvsoftskillitemsep,topsep=\cvsoftskilltopsep,parsep=0pt]
         \item Pragmatic
         \item Team working
         \item Result Oriented
       \end{itemize}}
 
-      \cvstretchgap
+      \cvsideflowgap
       \sideheading{DIGITAL SKILLS}
       \skillgroup{Physic Simulation}{%
         \begin{tabular}{@{}l@{\hspace{2.1mm}\vrule\hspace{2.1mm}}l@{}}
-          MATLAB & Ansys FLUENT\\
+          MATLAB & Ansys FLUENT\\[\cvskillrowgap]
           Simulink & Wolfram Mathematica
         \end{tabular}}
-      \cvstretchgap
+      \cvsideflowgap
       \skillgroup{\textmu C programming}{%
         \begin{tabular}{@{}l@{\hspace{2.1mm}\vrule\hspace{2.1mm}}l@{\hspace{2.1mm}\vrule\hspace{2.1mm}}l@{\hspace{2.1mm}\vrule\hspace{2.1mm}}l@{}}
-          Debian & Python & C & Arduino\\
+          Debian & Python & C & Arduino\\[\cvskillrowgap]
           Linux & ROS & C++ & C\#
         \end{tabular}}
-      \cvstretchgap
+      \cvsideflowgap
       \skillgroup{3-D Modeling}{%
         \begin{tabular}{@{}l@{\hspace{2.1mm}\vrule\hspace{2.1mm}}l@{}}
-          AutoCAD 2D & Autodesk Invetor\\
-          SolidWorks & Cura (Ultimaker)\\
+          AutoCAD 2D & Autodesk Invetor\\[\cvskillrowgap]
+          SolidWorks & Cura (Ultimaker)\\[\cvskillrowgap]
           MeshLab & Eagle - PCB design
         \end{tabular}}
 
-      \cvstretchgap
+      \cvsideflowgap
       \sideheading{LANGUAGES}
       \langbar{Italiano}{C 2}{45.5}
-      \cvstretchgap
+      \cvsideflowgap
       \langbar{English}{C 1}{38.0}
-      \cvstretchgap
+      \cvsideflowgap
       \langbar{Deutsch}{A 2}{15.0}
 
-      \cvstretchgap
-      \vspace{\beforepublicationsgap}
+      \cvsidebeforepublicationsgap
       \pubheading{PUBLICATIONS}
       \publication{\pubicon}{Kalman Supervised Network for\pubbreak improved Model Predictions.}
       \publication{\pubicon}{Recurrent and convolutional\pubbreak NN for deep terrain\pubbreak classification by autonomous\pubbreak robots.}

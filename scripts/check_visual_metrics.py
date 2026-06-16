@@ -14,6 +14,8 @@ from pathlib import Path
 LIMITS = {
     "sidebar_content_bottom_delta_pt": 0.10,
     "main_content_bottom_delta_pt": 0.10,
+    "sidebar_top_inset_delta_pt": 0.05,
+    "sideheading_arrow_height_delta_pt": 0.05,
     "publication_height_delta_pt": 0.25,
     "publication_icon_center_delta_pt": 0.10,
     "publication_top_delta_pt": 0.10,
@@ -59,6 +61,17 @@ def main() -> int:
         abs(require(metrics, "main_content_bottom_delta_pt")[0]),
         LIMITS["main_content_bottom_delta_pt"],
     ))
+    checks.append((
+        r"sidebar top inset: actual gap matches \cvsideframetopinsetvalue",
+        abs(require(metrics, "sidebar_top_inset_delta_pt")[0]),
+        LIMITS["sidebar_top_inset_delta_pt"],
+    ))
+
+    sidebar_top_inset = require(metrics, "sidebar_top_inset_pt")[0]
+    print(
+        "INFO: sidebar top gap from frame line: "
+        f"{sidebar_top_inset:.3f}pt; adjust \\cvsideframetopinsetvalue to move ABOUT ME"
+    )
 
     for idx, value in enumerate(require(metrics, "publication_height_delta_pt"), start=1):
         checks.append((f"publication {idx}: badge height equals text box height", abs(value), LIMITS["publication_height_delta_pt"]))
@@ -70,6 +83,12 @@ def main() -> int:
         checks.append((f"publication {idx}: badge bottom equals text box bottom", abs(value), LIMITS["publication_bottom_delta_pt"]))
     for idx, value in enumerate(require(metrics, "mainsection_rule_center_delta_pt"), start=1):
         checks.append((f"main section {idx}: rule centered on title box", abs(value), LIMITS["mainsection_rule_center_delta_pt"]))
+    for idx, value in enumerate(require(metrics, "sideheading_arrow_height_delta_pt"), start=1):
+        checks.append((
+            f"sidebar heading {idx}: arrow vertical box equals heading text box",
+            abs(value),
+            LIMITS["sideheading_arrow_height_delta_pt"],
+        ))
 
     divider_values = require(metrics, "divider_gap_delta_pt")
     checks.append(("divider gaps: before/after divider rule are equal", max(abs(v) for v in divider_values), LIMITS["divider_gap_delta_pt"]))
