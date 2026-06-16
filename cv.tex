@@ -72,11 +72,8 @@
 \newcommand{\langbarvspace}{0.85mm}
 \newlength{\sectiontitlegap}
 \newlength{\sectionrulewidth}
-\newlength{\sectionruleraise}
 \newsavebox{\sectiontitlebox}
 \setlength{\sectiontitlegap}{2.1mm}
-\newlength{\pubiconcenterx}
-\setlength{\pubiconcenterx}{\dimexpr\pubiconwidth/2\relax}
 
 \newcommand{\bio}{\fontfamily{LinuxBiolinumT-LF}\selectfont}
 \newcommand{\sans}{\fontfamily{Montserrat-LF}\selectfont}
@@ -89,9 +86,6 @@
   {\color{white}\fontsize{9.3}{10.5}\selectfont
   \faIcon{#1}\hspace{1.2mm}#3}%
 }
-
-\makeatletter
-\newcommand{\cvmetric}[2]{\typeout{CVVISUAL|#1|#2}}
 
 \newcommand{\sideheading}[1]{%
   \vspace{0.65mm}%
@@ -132,8 +126,8 @@
 \newcommand{\pubicon}[1]{%
   \begin{tikzpicture}[baseline=(current bounding box.north)]
     \path[fill=cvteal,rounded corners=1.0mm] (0pt,0pt) rectangle (\pubiconwidth,-#1);
-    \coordinate (icontop) at (\pubiconcenterx,0pt);
-    \coordinate (iconbottom) at (\pubiconcenterx,-#1);
+    \coordinate (icontop) at (2.5mm,0pt);
+    \coordinate (iconbottom) at (2.5mm,-#1);
     \node[inner sep=0pt]
       at ($(icontop)!0.5!(iconbottom)$) {%
         \includegraphics[
@@ -166,8 +160,6 @@
   \sbox{\pubtextbox}{%
     \begin{minipage}[t]{\pubtextwidth}\vspace{0pt}\raggedright\fontsize{10.15}{\publineheight}\selectfont #2\end{minipage}}%
   \setlength{\pubboxheight}{\dimexpr\ht\pubtextbox+\dp\pubtextbox\relax}%
-  \cvmetric{publication_height_delta_pt}{\strip@pt\the\dimexpr\pubboxheight-\ht\pubtextbox-\dp\pubtextbox\relax pt}%
-  \cvmetric{publication_icon_center_delta_pt}{\strip@pt\the\dimexpr\pubboxheight/2-\pubboxheight/2\relax pt}%
   \noindent
   \begin{minipage}[t][\pubboxheight][t]{\pubiconboxwidth}\vspace{0pt}#1{\pubboxheight}\end{minipage}%
   \hspace{\pubicongap}%
@@ -182,12 +174,10 @@
   \sbox{\sectiontitlebox}{\color{cvteal}\wide{\fontsize{17.2}{18}\selectfont #1}}%
   \setlength{\sectionrulewidth}{\dimexpr\linewidth-\wd\sectiontitlebox-2\sectiontitlegap\relax}%
   \setlength{\sectionrulewidth}{0.5\sectionrulewidth}%
-  \setlength{\sectionruleraise}{\dimexpr(\ht\sectiontitlebox-\dp\sectiontitlebox)/2-0.325pt\relax}%
-  \cvmetric{mainsection_rule_center_delta_pt}{\strip@pt\the\dimexpr\sectionruleraise+0.325pt-(\ht\sectiontitlebox-\dp\sectiontitlebox)/2\relax pt}%
   \noindent\makebox[\linewidth][l]{%
-    \raisebox{\sectionruleraise}{\textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}}%
+    \textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}%
     \hspace{\sectiontitlegap}\usebox{\sectiontitlebox}%
-    \hspace{\sectiontitlegap}\raisebox{\sectionruleraise}{\textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}}%
+    \hspace{\sectiontitlegap}\textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}%
   }\par\vspace{2.9mm}
 }
 
@@ -202,8 +192,7 @@
 }
 
 \newcommand{\divider}{%
-  \cvmetric{divider_gap_delta_pt}{\strip@pt\the\dimexpr\dividergap-\dividergap\relax pt}%
-  \par\vspace{\dividergap}\nointerlineskip\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\vspace{\dividergap}
+  \vspace{\dividergap}\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\vspace{\dividergap}
 }
 
 \newcommand{\cvitems}{%
@@ -217,7 +206,6 @@
   \vspace{0.8mm}
   {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent #3\par}
 }
-\makeatother
 
 \begin{document}
 \null

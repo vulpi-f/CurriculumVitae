@@ -10,14 +10,6 @@ latexmk cv.tex
 
 The generated file is `cv.pdf`.
 
-The source also emits machine-readable visual metrics while compiling.  To
-validate the alignment-sensitive parts of the layout after text edits, run:
-
-```sh
-latexmk -pdf -g -interaction=nonstopmode cv.tex
-python3 scripts/check_visual_metrics.py cv.log
-```
-
 ## Structure
 
 - `cv.tex`: main LaTeX source.
@@ -45,11 +37,10 @@ Current high-impact controls in `cv.tex`:
   heading spacing.
 - `\sectiontitlegap`: gap between the main-column section titles and the
   horizontal rules.  `\mainsection` measures the title and computes both rule
-  widths from `\linewidth`, then raises the rules so their stroke centres align
-  with the measured title box centre.
+  widths from `\linewidth`, so the rule pair is anchored to the right-column
+  text block.
 - `\dividergap`: symmetric vertical spacing above and below the right-column
-  entry dividers.  The divider macro suppresses the extra interline glue around
-  the rule so the requested gap is the rendered gap.
+  entry dividers.
 - `\skillgroupvspace`, `\langbarvspace`, `\beforepublicationsgap`: left-column
   vertical rhythm controls for the digital-skills groups, language bars, and
   the gap before the publications heading.
@@ -93,18 +84,3 @@ Online package checks performed for icon matching:
 If a future editor installs extra LaTeX packages and wants a font-based ORCID
 icon, test `academicons` or the ORCID icon available in newer Font Awesome
 bindings against the reference PDF before replacing the current asset.
-
-## Visual metrics
-
-`cv.tex` writes `CVVISUAL|...` records to `cv.log` for geometry that is easy to
-break when changing copy:
-
-- publication badge height versus measured publication text height;
-- link icon centre versus badge centre;
-- main-section rule centre versus section-title centre;
-- divider spacing above versus below the teal rule.
-
-`scripts/check_visual_metrics.py` parses those records and fails when a metric
-exceeds its tolerance.  These checks are not a substitute for a final human
-preview, but they catch the recurring alignment regressions before opening the
-PDF.
