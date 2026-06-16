@@ -3,7 +3,7 @@
 \usepackage[paperwidth=210.079mm,paperheight=297.127mm,margin=0mm]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[lf,p]{biolinum}
+\usepackage[lf,p,scaled=0.96]{biolinum}
 \usepackage[lining,p]{montserrat}
 \usepackage{textcomp}
 \usepackage{graphicx}
@@ -85,10 +85,10 @@
 
 \newcommand{\publication}[2]{%
   \noindent
-  \begin{minipage}[t]{7mm}\vspace{0pt}#1\end{minipage}%
-  \hspace{1.1mm}%
-  \begin{minipage}[t]{45.0mm}\vspace{0pt}\fontsize{10.2}{14.8}\selectfont #2\end{minipage}%
-  \par\vspace{0.95mm}
+  \begin{minipage}[t]{6.9mm}\vspace{0pt}#1\end{minipage}%
+  \hspace{1.0mm}%
+  \begin{minipage}[t]{46.2mm}\vspace{0pt}\raggedright\fontsize{10.15}{14.15}\selectfont #2\end{minipage}%
+  \par\vspace{0.65mm}
 }
 
 \newcommand{\mainsection}[1]{%
@@ -107,7 +107,7 @@
   \vspace{0.7mm}
   {\fontsize{11.0}{12.0}\selectfont #3\textcolor{cvtext}{\ - #4}}\par
   \vspace{0.8mm}
-  {\color{cvtext}\fontsize{10.03}{13.55}\selectfont\justifying\noindent #5\par}
+  {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent #5\par}
 }
 
 \newcommand{\divider}{%
@@ -123,7 +123,7 @@
   \noindent{\fontsize{11.0}{12.0}\selectfont #1}%
   \hfill{\fontsize{11.0}{12.0}\selectfont #2}\par
   \vspace{0.8mm}
-  {\color{cvtext}\fontsize{10.03}{13.55}\selectfont\justifying\noindent #3\par}
+  {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent #3\par}
 }
 
 \begin{document}
