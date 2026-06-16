@@ -84,6 +84,7 @@
 \newcommand{\pubentrygap}{\cvobjectgap}
 \newcommand{\beforepublicationsgap}{0pt}
 \newcommand{\dividergap}{1.22mm}
+\newcommand{\entrylinegap}{0.60mm}
 \newcommand{\skillgroupvspace}{\cvdetailgap}
 \newcommand{\langbarvspace}{\cvdetailgap}
 \newlength{\sectiontitlegap}
@@ -221,13 +222,14 @@
 }
 
 \newcommand{\entry}[5]{%
+  \nointerlineskip
   \noindent
-  {\fontsize{12.4}{13.4}\selectfont\bfseries #1}%
-  \hfill{\fontsize{11.0}{12.0}\selectfont #2}\par
-  \vspace{0.55mm}
-  {\fontsize{11.0}{12.0}\selectfont #3\textcolor{cvtext}{\ - #4}}\par
-  \vspace{0.65mm}
-  {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent #5\par}
+  {\fontsize{12.4}{13.4}\selectfont\bfseries\strut #1}%
+  \hfill{\fontsize{11.0}{12.0}\selectfont\strut #2}\par
+  \vspace{\entrylinegap}
+  {\fontsize{11.0}{12.0}\selectfont\strut #3\textcolor{cvtext}{\ - #4}}\par
+  \vspace{\entrylinegap}
+  {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent\strut #5\par}
 }
 
 \newcommand{\divider}{%
@@ -241,10 +243,11 @@
 \newcommand{\cvitemsend}{\end{itemize}}
 
 \newcommand{\awardentry}[3]{%
-  \noindent{\fontsize{11.0}{12.0}\selectfont #1}%
-  \hfill{\fontsize{11.0}{12.0}\selectfont #2}\par
-  \vspace{0.65mm}
-  {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent #3\par}
+  \nointerlineskip
+  \noindent{\fontsize{11.0}{12.0}\selectfont\strut #1}%
+  \hfill{\fontsize{11.0}{12.0}\selectfont\strut #2}\par
+  \vspace{\entrylinegap}
+  {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent\strut #3\par}
 }
 
 \makeatother
