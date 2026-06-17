@@ -14,6 +14,7 @@ from pathlib import Path
 LIMITS = {
     "sidebar_content_bottom_delta_pt": 0.10,
     "main_content_bottom_delta_pt": 0.10,
+    "main_auto_gap_balance_delta_pt": 0.10,
     "sidebar_top_inset_delta_pt": 0.05,
     "page_margin_left_delta_pt": 0.05,
     "page_margin_right_delta_pt": 0.05,
@@ -29,6 +30,8 @@ LIMITS = {
     "mainsection_rule_center_delta_pt": 0.15,
     "divider_gap_delta_pt": 0.05,
 }
+
+MIN_MAIN_AUTO_GAP_PT = 0.50
 
 METRIC_RE = re.compile(r"CVVISUAL\|(?P<name>[^|]+)\|\s*(?P<value>[-+0-9.]+)\s*pt")
 
@@ -67,6 +70,13 @@ def main() -> int:
         abs(require(metrics, "main_content_bottom_delta_pt")[0]),
         LIMITS["main_content_bottom_delta_pt"],
     ))
+    main_gap_count = require(metrics, "main_auto_gap_count_pt")[0]
+    main_gap = require(metrics, "main_auto_gap_pt")[0]
+    checks.append((
+        "main column: measured elements plus computed equal gaps fill the frame",
+        abs(require(metrics, "main_auto_gap_balance_delta_pt")[0]),
+        LIMITS["main_auto_gap_balance_delta_pt"],
+    ))
     checks.append((
         r"sidebar top inset: actual gap matches \cvsideframetopinsetvalue",
         abs(require(metrics, "sidebar_top_inset_delta_pt")[0]),
@@ -103,6 +113,10 @@ def main() -> int:
         "INFO: sidebar top gap from frame line: "
         f"{sidebar_top_inset:.3f}pt; adjust \\cvsideframetopinsetvalue to move ABOUT ME"
     )
+    print(
+        "INFO: main column equal gap: "
+        f"{main_gap:.3f}pt across {int(round(main_gap_count))} measured transitions"
+    )
 
     for idx, value in enumerate(require(metrics, "publication_height_delta_pt"), start=1):
         checks.append((f"publication {idx}: badge height equals trimmed visual text box", abs(value), LIMITS["publication_height_delta_pt"]))
@@ -127,6 +141,12 @@ def main() -> int:
     checks.append(("divider gaps: before/after divider rule are equal", max(abs(v) for v in divider_values), LIMITS["divider_gap_delta_pt"]))
 
     failed = False
+    if main_gap > MIN_MAIN_AUTO_GAP_PT:
+        print(f"OK: main column: computed equal gap remains positive: {main_gap:.3f}pt > {MIN_MAIN_AUTO_GAP_PT:.3f}pt")
+    else:
+        print(f"FAIL: main column: computed equal gap remains positive: {main_gap:.3f}pt > {MIN_MAIN_AUTO_GAP_PT:.3f}pt")
+        failed = True
+
     for label, observed, limit in checks:
         status = "OK" if observed <= limit else "FAIL"
         print(f"{status}: {label}: {observed:.3f}pt <= {limit:.3f}pt")

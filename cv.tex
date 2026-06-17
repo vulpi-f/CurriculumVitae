@@ -34,10 +34,10 @@
 % - The design intentionally uses absolute TikZ coordinates to mirror the
 %   Canva/reference PDF.  When retouching, prefer changing only the named
 %   constants below before moving content coordinates.
-% - The main-column rhythm uses \cvmainvisualgap as the single base spacing:
-%   every title/location/description/divider transition gets that value plus
-%   one equal stretch unit, so changing the parameter preserves the visual
-%   distribution instead of retuning individual entry gaps.
+% - The main-column rhythm is measured, not tuned: the content is first boxed
+%   with zero vertical gaps, the remaining height is divided by the counted
+%   title/location/description/divider transitions, then that one computed gap
+%   is used everywhere to fill the column exactly.
 % - Publication link badges compute their height from the text box plus visual
 %   trim offsets. The link artwork is centered in a square inner box whose
 %   center is the badge center.
@@ -91,11 +91,14 @@
 \setlength{\cvmaincontenttop}{38.65mm}
 \setlength{\cvsidebarcontentheight}{\dimexpr\cvcontentbottom-\cvsidebarcontenttop\relax}
 \setlength{\cvmaincontentheight}{\dimexpr\cvcontentbottom-\cvmaincontenttop\relax}
-\newcommand{\cvmainvisualgap}{0.60mm}
-\newcommand{\cvmainstretchunit}{1fill}
-\newcommand{\cvmainobjectgap}{\cvmainvisualgap plus \cvmainstretchunit}
+\newlength{\cvmaincomputedgap}
+\newlength{\cvmainnaturalheight}
+\newlength{\cvmainusedheight}
+\newcount\cvmaingapcount
+\newif\ifcvmainmeasuring
+\newif\ifcvsuppressmetrics
+\newsavebox{\cvmainmeasurebox}
 \newcommand{\cvsideobjectgap}{0pt plus 1fill}
-\newcommand{\cvmainflowgap}{\par\vspace{\cvmainobjectgap}}
 \newcommand{\cvsideflowgap}{\par\vspace{\cvsideobjectgap}}
 \newcommand{\cvsidestartflowgap}{\vspace*{\cvsideobjectgap}}
 % Sidebar tuning knobs:
@@ -164,8 +167,6 @@
 \newcommand{\pubentrygap}{\cvsidepubentrygap}
 \newcommand{\pubboxvisualtoptrim}{0.04mm}
 \newcommand{\pubboxvisualbottomtrim}{0.12mm}
-\newcommand{\dividergap}{\cvmainobjectgap}
-\newcommand{\entrylinegap}{\cvmainobjectgap}
 \newlength{\sectiontitlegap}
 \newlength{\sectionrulewidth}
 \newlength{\sectionruleraise}
@@ -191,10 +192,13 @@
 
 \makeatletter
 \newcommand{\cvmetricdim}[2]{%
-  \begingroup
-  \dimen@=\dimexpr#2\relax
-  \typeout{CVVISUAL|#1|\strip@pt\dimen@ pt}%
-  \endgroup
+  \ifcvsuppressmetrics
+  \else
+    \begingroup
+    \dimen@=\dimexpr#2\relax
+    \typeout{CVVISUAL|#1|\strip@pt\dimen@ pt}%
+    \endgroup
+  \fi
 }
 \newcommand{\cvframeconstraintmetrics}{%
   \cvmetricdim{sidebar_content_bottom_delta_pt}{\cvsidebarcontenttop+\cvsidebarcontentheight-\cvcontentbottom}%
@@ -206,6 +210,34 @@
   \cvmetricdim{page_margin_symmetry_delta_pt}{\cvsidecolumnleft-\cvpaperwidth+\cvmaincolumnright}%
   \cvmetricdim{column_gutter_left_delta_pt}{\cvcolumnrulecenter-\cvcolumnrulewidth/2-\cvsidecolumnright-\cvcolumngutter}%
   \cvmetricdim{column_gutter_right_delta_pt}{\cvmaincolumnleft-\cvcolumnrulecenter-\cvcolumnrulewidth/2-\cvcolumngutter}%
+}
+
+\newcommand{\cvmaingap}{%
+  \ifcvmainmeasuring
+    \global\advance\cvmaingapcount by 1
+  \fi
+  \vspace{\cvmaincomputedgap}%
+}
+
+\newcommand{\cvmainflowgap}{\par\cvmaingap}
+
+\newcommand{\cvpreparemainlayout}{%
+  \setlength{\cvmaincomputedgap}{0pt}%
+  \global\cvmaingapcount=0
+  \cvmainmeasuringtrue
+  \cvsuppressmetricstrue
+  \sbox{\cvmainmeasurebox}{%
+    \begin{minipage}[t]{\cvmaincolumnwidth}
+      \cvmaincontent
+    \end{minipage}}%
+  \cvsuppressmetricsfalse
+  \cvmainmeasuringfalse
+  \setlength{\cvmainnaturalheight}{\dimexpr\ht\cvmainmeasurebox+\dp\cvmainmeasurebox\relax}%
+  \setlength{\cvmaincomputedgap}{\dimexpr(\cvmaincontentheight-\cvmainnaturalheight)/\cvmaingapcount\relax}%
+  \setlength{\cvmainusedheight}{\dimexpr\cvmainnaturalheight+\number\cvmaingapcount\cvmaincomputedgap\relax}%
+  \cvmetricdim{main_auto_gap_count_pt}{\number\cvmaingapcount pt}%
+  \cvmetricdim{main_auto_gap_pt}{\cvmaincomputedgap}%
+  \cvmetricdim{main_auto_gap_balance_delta_pt}{\cvmainusedheight-\cvmaincontentheight}%
 }
 
 \newcommand{\sideheading}[1]{%
@@ -321,15 +353,15 @@
   \noindent
   {\fontsize{12.4}{13.4}\selectfont\bfseries\strut #1}%
   \hfill{\fontsize{11.0}{12.0}\selectfont\strut #2}\par
-  \vspace{\entrylinegap}
+  \cvmaingap
   {\fontsize{11.0}{12.0}\selectfont\strut #3\textcolor{cvtext}{\ - #4}}\par
-  \vspace{\entrylinegap}
+  \cvmaingap
   {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent\strut #5\par}
 }
 
 \newcommand{\divider}{%
-  \cvmetricdim{divider_gap_delta_pt}{\cvmainvisualgap-\cvmainvisualgap}%
-  \par\vspace{\dividergap}\nointerlineskip\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\vspace{\dividergap}
+  \cvmetricdim{divider_gap_delta_pt}{\cvmaincomputedgap-\cvmaincomputedgap}%
+  \par\cvmaingap\nointerlineskip\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\cvmaingap
 }
 
 \newcommand{\cvitems}{%
@@ -341,13 +373,59 @@
   \nointerlineskip
   \noindent{\fontsize{11.0}{12.0}\selectfont\strut #1}%
   \hfill{\fontsize{11.0}{12.0}\selectfont\strut #2}\par
-  \vspace{\entrylinegap}
+  \cvmaingap
   {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent\strut #3\par}
+}
+
+\newcommand{\cvmaincontent}{%
+  \mainsection{WORK EXPERIENCE}
+  \entry{Experienced Consultant}{10/2024 - current}
+    {\cvlink{https://www.amaris.com/}{Amaris Consulting}}
+    {Turin (IT)}
+    {Vehicle Functional Safety (FuSa) consultant for ISO 26262:2018. Partnered with the FuSa Manager on the Safety Concept and Development Interface Agreement (DIA), led Hazard Analysis and Risk Assessment (HARA) and Failure Modes and Effects Analysis (FMEA) reviews. Validated ISO-compliant safety requirements throughout the automotive safety lifecycle.}
+  \divider
+  \entry{Software System Engineer}{01/2023 - 10/2024}
+    {\cvlink{https://www.bosch.it/}{Bosch CVIT}}
+    {Bari (IT)}
+    {Served as a Functional Safety Software Engineer on the top-level V-model for Engine and Battery Control Unit development--ensuring ISO 26262 compliance across light-duty and heavy-duty platforms, diesel and electric powertrains. Engineered AI and ML driven vehicle convenience features (such as passive keyless entry and gesture-based trunk release) leveraging advanced signal processing and device-tracking models.}
+  \divider
+  \entry{Software Automation Engineer}{11/2022 - 01/2023}
+    {\cvlink{https://www.linksmt.it/}{Links Management \& Technology}}
+    {Bari (IT)}
+    {Engineered Artificial Intelligence and Machine Learning software solutions to optimize automation workflows.}
+
+  \cvmainflowgap
+  \mainsection{EDUCATION}
+  \entry{Ph.D. in Mechanical Engineering and Management}{11/2019 - 04/2023}
+    {\cvlink{https://www.poliba.it/}{Polytechnic of Bari}}
+    {Bari (IT)}
+    {Collaborated with \cvlink{https://www.stiima.cnr.it/}{CNR-STIIMA} on EU-funded projects \cvlink{https://www.ade-project.eu/}{ADE}, \cvlink{https://www.atlas-h2020.eu/}{ATLAS}, and \cvlink{https://antonio-project.eu/}{ANTONIO}, leading HW/SW development and AI/ML algorithm design for mechanical systems.
+    \cvitems
+      \item ADE: Implemented deep-learning terrain-classification pipelines for autonomous exploration rovers.
+      \item ATLAS: Engineered a ROS-based, multi-sensor robotic platform for 3D reconstruction and analysis of agricultural fields.
+      \item ANTONIO: Developed advanced signal- and image-processing workflows for crop-monitoring automated guided robots (AGRs).
+    \cvitemsend}
+  \divider
+  \entry{Master of Science in Mechanical Engineering}{10/2017 - 10/2019}
+    {\cvlink{https://www.nyu.edu/}{NYU}}
+    {New York (USA)\hfill 110L/110 - GPA 3.952/4}
+    {Completed a double-degree program in Mechanical Engineering, specializing in Mechatronics and Robotics, in collaboration with the Polytechnic of Bari. Authored an M.S. thesis in Medical Engineering field on wearable inertial-sensor systems for quantitative assessment of upper-extremity range of motion.}
+  \divider
+  \entry{Bachelor Degree in Mechanical Engineering}{07/2014 - 07/2017}
+    {\cvlink{https://www.poliba.it/}{Polytechnic of Bari}}
+    {Bari (IT)\hfill 109/110}
+    {Performed physics-based modeling and numerical computation to investigate the nonlinear dynamics of oscillators with a bistable potential.}
+
+  \cvmainflowgap
+  \mainsection{AWARDS}
+  \awardentry{\cvlink{https://www.ingeniarius.pt/}{Ingeniarius Ltd}\textcolor{cvtext}{\ - Porto (PT)}}{RobotCraft First Place Award - 08/2022}
+    {The competition challenged me to design and assemble an autonomous mobile robot that would fully explore a maze and generate LiDAR-based SLAM maps in ROS, then re-navigate the maze optimizing the path using its computed map. I developed real-time C++ and Python algorithms for mapping and path planning and integrated Arduino-driven motor control.}
 }
 
 \makeatother
 \begin{document}
 \null
+\cvpreparemainlayout
 \begin{tikzpicture}[remember picture,overlay,x=1mm,y=-1mm]
 \begin{scope}[shift={(current page.north west)}]
   \cvframeconstraintmetrics
@@ -436,49 +514,8 @@
     \end{minipage}};
 
   \node[anchor=north west,inner sep=0pt] at (\cvmaincolumnxvalue,38.65) {%
-    \begin{minipage}[t][\cvmaincontentheight][s]{\cvmaincolumnwidth}
-      \mainsection{WORK EXPERIENCE}
-      \entry{Experienced Consultant}{10/2024 - current}
-        {\cvlink{https://www.amaris.com/}{Amaris Consulting}}
-        {Turin (IT)}
-        {Vehicle Functional Safety (FuSa) consultant for ISO 26262:2018. Partnered with the FuSa Manager on the Safety Concept and Development Interface Agreement (DIA), led Hazard Analysis and Risk Assessment (HARA) and Failure Modes and Effects Analysis (FMEA) reviews. Validated ISO-compliant safety requirements throughout the automotive safety lifecycle.}
-      \divider
-      \entry{Software System Engineer}{01/2023 - 10/2024}
-        {\cvlink{https://www.bosch.it/}{Bosch CVIT}}
-        {Bari (IT)}
-        {Served as a Functional Safety Software Engineer on the top-level V-model for Engine and Battery Control Unit development--ensuring ISO 26262 compliance across light-duty and heavy-duty platforms, diesel and electric powertrains. Engineered AI and ML driven vehicle convenience features (such as passive keyless entry and gesture-based trunk release) leveraging advanced signal processing and device-tracking models.}
-      \divider
-      \entry{Software Automation Engineer}{11/2022 - 01/2023}
-        {\cvlink{https://www.linksmt.it/}{Links Management \& Technology}}
-        {Bari (IT)}
-        {Engineered Artificial Intelligence and Machine Learning software solutions to optimize automation workflows.}
-
-      \cvmainflowgap
-      \mainsection{EDUCATION}
-      \entry{Ph.D. in Mechanical Engineering and Management}{11/2019 - 04/2023}
-        {\cvlink{https://www.poliba.it/}{Polytechnic of Bari}}
-        {Bari (IT)}
-        {Collaborated with \cvlink{https://www.stiima.cnr.it/}{CNR-STIIMA} on EU-funded projects \cvlink{https://www.ade-project.eu/}{ADE}, \cvlink{https://www.atlas-h2020.eu/}{ATLAS}, and \cvlink{https://antonio-project.eu/}{ANTONIO}, leading HW/SW development and AI/ML algorithm design for mechanical systems.
-        \cvitems
-          \item ADE: Implemented deep-learning terrain-classification pipelines for autonomous exploration rovers.
-          \item ATLAS: Engineered a ROS-based, multi-sensor robotic platform for 3D reconstruction and analysis of agricultural fields.
-          \item ANTONIO: Developed advanced signal- and image-processing workflows for crop-monitoring automated guided robots (AGRs).
-        \cvitemsend}
-      \divider
-      \entry{Master of Science in Mechanical Engineering}{10/2017 - 10/2019}
-        {\cvlink{https://www.nyu.edu/}{NYU}}
-        {New York (USA)\hfill 110L/110 - GPA 3.952/4}
-        {Completed a double-degree program in Mechanical Engineering, specializing in Mechatronics and Robotics, in collaboration with the Polytechnic of Bari. Authored an M.S. thesis in Medical Engineering field on wearable inertial-sensor systems for quantitative assessment of upper-extremity range of motion.}
-      \divider
-      \entry{Bachelor Degree in Mechanical Engineering}{07/2014 - 07/2017}
-        {\cvlink{https://www.poliba.it/}{Polytechnic of Bari}}
-        {Bari (IT)\hfill 109/110}
-        {Performed physics-based modeling and numerical computation to investigate the nonlinear dynamics of oscillators with a bistable potential.}
-
-      \cvmainflowgap
-      \mainsection{AWARDS}
-      \awardentry{\cvlink{https://www.ingeniarius.pt/}{Ingeniarius Ltd}\textcolor{cvtext}{\ - Porto (PT)}}{RobotCraft First Place Award - 08/2022}
-        {The competition challenged me to design and assemble an autonomous mobile robot that would fully explore a maze and generate LiDAR-based SLAM maps in ROS, then re-navigate the maze optimizing the path using its computed map. I developed real-time C++ and Python algorithms for mapping and path planning and integrated Arduino-driven motor control.}
+    \begin{minipage}[t][\cvmaincontentheight][t]{\cvmaincolumnwidth}
+      \cvmaincontent
     \end{minipage}};
 \end{scope}
 \end{tikzpicture}
