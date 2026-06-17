@@ -77,6 +77,14 @@
 \newcommand{\cvskillbodybaselineskip}{11.8}
 \newcommand{\cvsoftskillitemsep}{0.28mm}
 \newcommand{\cvsoftskilltopsep}{0pt}
+% Fixed visual trims compensate the top line boxes of the following content
+% objects.  The stretchable spacing itself remains \cvsideobjectgap; these
+% trims only make the visible whitespace around selected sidebar headings
+% match the same elastic gap rendered elsewhere.
+\newcommand{\cvaboutheadingcontenttrim}{-1.10mm}
+\newcommand{\cvsoftskillheadingcontenttrim}{-1.20mm}
+\newcommand{\cvpublicationheadingtoptrim}{0.25mm}
+\newcommand{\cvpublicationheadingcontenttrim}{-3.10mm}
 \newcommand{\cvskillgroupvspace}{0.68mm}
 \newcommand{\cvskillrowgap}{0.22mm}
 \newcommand{\cvlangbarvspace}{\cvskillrowgap}
@@ -320,6 +328,7 @@
     \begin{minipage}[t][\cvsidebarcontentheight][s]{\cvsidecolumnwidth}
       \cvsidestartflowgap
       \sideheading{ABOUT ME}
+      \vspace{\cvaboutheadingcontenttrim}
       {\fontsize{\cvsidebodyfontsize}{\cvsidebodybaselineskip}\selectfont
       Daring and versatile, I firmly believe\\
       that attaining successful outcomes\\
@@ -329,6 +338,7 @@
 
       \cvsideflowgap
       \sideheading{SOFT-SKILLS}
+      \vspace{\cvsoftskillheadingcontenttrim}
       {\fontsize{9.9}{11.1}\selectfont
       \begin{itemize}[leftmargin=5.2mm,itemsep=\cvsoftskillitemsep,topsep=\cvsoftskilltopsep,parsep=0pt]
         \item Pragmatic
@@ -366,7 +376,9 @@
       \langbar{Deutsch}{A 2}{15.0}
 
       \cvsidebeforepublicationsgap
+      \vspace{\cvpublicationheadingtoptrim}
       \pubheading{PUBLICATIONS}
+      \vspace{\cvpublicationheadingcontenttrim}
       \publication{\pubicon}{Kalman Supervised Network for\pubbreak improved Model Predictions.}
       \publication{\pubicon}{Recurrent and convolutional\pubbreak NN for deep terrain\pubbreak classification by autonomous\pubbreak robots.}
       \publication{\pubicon}{An RGB-D multi-view\pubbreak perspective for autonomous\pubbreak agricultural robots.}
