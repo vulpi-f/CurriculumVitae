@@ -66,7 +66,8 @@
 %   edge of the top frame rule; the visible top padding is elastic.
 % - \cvsideobjectgap distributes macro objects in the sidebar: title/content
 %   boundaries, section-to-section boundaries, and publication-to-publication
-%   gaps all share this same stretchable rhythm.
+%   gaps all share this same stretchable rhythm; skill-subgroup title/content
+%   boundaries use it too.
 % - \cvsidestartflowgap preserves the first elastic gap at minipage top, where
 %   plain \vspace would be discarded.
 % - The remaining \cvside... and \cvskill... constants tune sidebar micro-gaps.
@@ -85,7 +86,7 @@
 \newcommand{\cvsoftskillheadingcontenttrim}{-1.20mm}
 \newcommand{\cvpublicationheadingtoptrim}{0.25mm}
 \newcommand{\cvpublicationheadingcontenttrim}{-3.10mm}
-\newcommand{\cvskillgroupvspace}{0.68mm}
+\newcommand{\cvskillgroupvspace}{\cvsideobjectgap}
 \newcommand{\cvskillrowgap}{0.22mm}
 \newcommand{\cvlangbarvspace}{\cvskillrowgap}
 \newcommand{\cvsidepubentrygap}{\cvsideobjectgap}
