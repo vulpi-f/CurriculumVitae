@@ -67,16 +67,20 @@
 % - The remaining \cvside... and \cvskill... constants tune sidebar micro-gaps.
 \newcommand{\cvsidebeforepublicationsgap}{\par\vspace{0pt plus 1.10fill}}
 \newcommand{\cvsideheadingcontentgap}{0.82mm}
+\newcommand{\cvsidebodyfontsize}{9.85}
+\newcommand{\cvsidebodybaselineskip}{12.75}
+\newcommand{\cvskillbodybaselineskip}{11.8}
 \newcommand{\cvsoftskillitemsep}{0.28mm}
 \newcommand{\cvsoftskilltopsep}{0pt}
 \newcommand{\cvskillgroupvspace}{0.68mm}
 \newcommand{\cvskillrowgap}{0.22mm}
 \newcommand{\cvlangbarvspace}{0.68mm}
 \newcommand{\cvsidepubentrygap}{\cvsideobjectgap}
+\newcommand{\cvsidecolumnwidth}{55.0mm}
 \newcommand{\cvskillseparator}[1]{\hspace{#1}\vrule\hspace{#1}}
-\newcommand{\cvskillphysicssep}{4.60mm}
-\newcommand{\cvskillcprogsep}{2.85mm}
-\newcommand{\cvskillmodelingsep}{4.00mm}
+\newcommand{\cvskillphysicssep}{5.68mm}
+\newcommand{\cvskillcprogsep}{3.00mm}
+\newcommand{\cvskillmodelingsep}{5.45mm}
 \newcommand{\cvmaincolumnwidth}{139.4mm}
 \newcommand{\sidearrowboxwidth}{5.45mm}
 \newcommand{\sidearrowtrimleft}{59.37bp}
@@ -101,7 +105,7 @@
 \newcommand{\orcidtrimright}{0bp}
 \newcommand{\orcidtrimtop}{0bp}
 \newcommand{\orcidbaseline}{-0.82mm}
-\newcommand{\pubtextwidth}{\dimexpr55.0mm-\pubiconboxwidth-\pubicongap\relax}
+\newcommand{\pubtextwidth}{\dimexpr\cvsidecolumnwidth-\pubiconboxwidth-\pubicongap\relax}
 \newcommand{\publineheight}{13.85}
 \newcommand{\pubentrygap}{\cvsidepubentrygap}
 \newcommand{\dividergap}{1.22mm}
@@ -165,7 +169,7 @@
 \newcommand{\skillgroup}[2]{%
   {\centering{\sans\bfseries\fontsize{12.5}{13.2}\selectfont\color{cvteal}#1}\par}
   \vspace{\cvskillgroupvspace}
-  {\fontsize{8.9}{11.2}\selectfont #2\par}
+  {\fontsize{\cvsidebodyfontsize}{\cvskillbodybaselineskip}\selectfont #2\par}
 }
 
 \newcommand{\langbar}[3]{%
@@ -307,9 +311,9 @@
   \node[anchor=east] at (207.0,31.55) {\headeritem{envelope}{mailto:vulpi.fabio@gmail.com}{vulpi.fabio@gmail.com}};
 
   \node[anchor=north west,inner sep=0pt] at (2.65,\cvsidebarcontenttopvalue) {%
-    \begin{minipage}[t][\cvsidebarcontentheight][s]{55.0mm}
+    \begin{minipage}[t][\cvsidebarcontentheight][s]{\cvsidecolumnwidth}
       \sideheading{ABOUT ME}
-      {\fontsize{9.85}{12.75}\selectfont
+      {\fontsize{\cvsidebodyfontsize}{\cvsidebodybaselineskip}\selectfont
       Daring and versatile, I firmly believe\\
       that attaining successful outcomes\\
       relies on both the ability to ask\\
