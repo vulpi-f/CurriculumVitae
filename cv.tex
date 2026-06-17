@@ -46,7 +46,7 @@
 \newcommand{\cvphotomarginvalue}{3.00}
 \newcommand{\cvsidecolumnwidthvalue}{55.0}
 \newcommand{\cvmaincolumnwidthvalue}{144.58}
-\newcommand{\cvcolumnrulewidthvalue}{0.68}
+\newcommand{\cvcolumnrulewidthvalue}{0.78}
 \pgfmathsetmacro{\cvsidecolumnxvalue}{\cvphotomarginvalue}
 \pgfmathsetmacro{\cvsidecolumnrightvalue}{\cvsidecolumnxvalue+\cvsidecolumnwidthvalue}
 \pgfmathsetmacro{\cvmaincolumnxvalue}{\cvpagewidthvalue-\cvphotomarginvalue-\cvmaincolumnwidthvalue}
@@ -165,8 +165,11 @@
 \newcommand{\cvskillcprogsep}{3.00mm}
 \newcommand{\cvskillmodelingsep}{5.45mm}
 \newcommand{\cvmaincolumnwidth}{\cvmaincolumnwidthvalue mm}
+\newcommand{\sideheadingfontsize}{14.8}
+\newcommand{\sideheadingbaselineskip}{15.6}
+\newcommand{\sidearrowheight}{5.55mm}
 \newcommand{\sidearrowboxwidth}{5.45mm}
-\newcommand{\sidearrowxshift}{-0.35mm}
+\newcommand{\sidearrowxshift}{-0.25mm}
 \newcommand{\sidearrowtrimleft}{59.37bp}
 \newcommand{\sidearrowtrimbottom}{190.74bp}
 \newcommand{\sidearrowtrimright}{59.37bp}
@@ -174,7 +177,17 @@
 \newcommand{\pubiconwidth}{5.25mm}
 \newcommand{\pubiconboxwidth}{5.95mm}
 \newcommand{\pubicongap}{1.28mm}
-\newcommand{\sideheadinggap}{\dimexpr\pubiconboxwidth+\pubicongap-\sidearrowboxwidth\relax}
+\newcommand{\sideheadingtextoffset}{7.55mm}
+\newcommand{\sideheadinggap}{\dimexpr\sideheadingtextoffset-\sidearrowboxwidth\relax}
+\newcommand{\pubheadinggap}{\dimexpr\pubiconboxwidth+\pubicongap-\orcidboxwidth\relax}
+\newcommand{\cvsidebarframeleftvalue}{-9.32}
+\newcommand{\cvsidebarframerightvalue}{\cvcolumnrulexvalue}
+\newcommand{\cvsidebarframebottomvalue}{293.64}
+\newcommand{\cvsidebarframeradius}{5.3mm}
+\newcommand{\cvsidebarframecutleftvalue}{-0.45}
+\newcommand{\cvsidebarframecutrightvalue}{7.20}
+\newcommand{\cvsidebarframecutrisevalue}{0.75}
+\newcommand{\cvsidebarframecutdropvalue}{5.40}
 \newcommand{\publinkiconsize}{4.86mm}
 \newcommand{\pubiconartwidth}{\publinkiconsize}
 \newcommand{\pubiconartxshift}{0pt}
@@ -202,6 +215,7 @@
 \newsavebox{\sidearrowtextbox}
 \newsavebox{\pubheadingtextbox}
 \newlength{\sideheadingheight}
+\newlength{\sidearrowraise}
 \newlength{\pubheadingheight}
 \newlength{\orcidraise}
 \setlength{\sectiontitlegap}{1.85mm}
@@ -333,17 +347,18 @@
 }
 
 \newcommand{\sideheading}[1]{%
-  \sbox{\sideheadingtextbox}{\sans\bfseries\fontsize{15.3}{16.1}\selectfont #1}%
+  \sbox{\sideheadingtextbox}{\sans\bfseries\fontsize{\sideheadingfontsize}{\sideheadingbaselineskip}\selectfont #1}%
   \setlength{\sideheadingheight}{\dimexpr\ht\sideheadingtextbox+\dp\sideheadingtextbox\relax}%
+  \setlength{\sidearrowraise}{\dimexpr-\dp\sideheadingtextbox-(\sidearrowheight-\sideheadingheight)/2\relax}%
   \sbox{\sidearrowtextbox}{%
-    \raisebox{-\dp\sideheadingtextbox}{%
+    \raisebox{\sidearrowraise}{%
       \includegraphics[
-        height=\sideheadingheight,
+        height=\sidearrowheight,
         keepaspectratio,
         trim=\sidearrowtrimleft{} \sidearrowtrimbottom{} \sidearrowtrimright{} \sidearrowtrimtop{},
         clip
       ]{CV_side_arrow.png}}}%
-  \cvmetricdim{sideheading_arrow_height_delta_pt}{\ht\sidearrowtextbox+\dp\sidearrowtextbox-\sideheadingheight}%
+  \cvmetricdim{sideheading_arrow_height_delta_pt}{\ht\sidearrowtextbox+\dp\sidearrowtextbox-\sidearrowheight}%
   \nointerlineskip
   \noindent
   \makebox[\sidearrowboxwidth][c]{\hspace{\sidearrowxshift}\usebox{\sidearrowtextbox}}%
@@ -423,7 +438,7 @@
   \nointerlineskip
   \noindent
   \orcidicon%
-  \hspace{\sideheadinggap}\usebox{\pubheadingtextbox}\par
+  \hspace{\pubheadinggap}\usebox{\pubheadingtextbox}\par
   \cvsideheadingcontentgap
 }
 
@@ -607,8 +622,13 @@
   \fill[cvteal] (0,0) rectangle (210,36.1);
   \fill[cvbg] (0,36.1) rectangle (210,297);
 
-  \draw[cvteal,line width=\cvcolumnrulewidth,rounded corners=5.3mm]
-    (-9.32,39.02) rectangle (\cvcolumnrulexvalue,293.64);
+  \draw[cvteal,line width=\cvcolumnrulewidth,rounded corners=\cvsidebarframeradius]
+    (\cvsidebarframeleftvalue,\cvsidebarframetopvalue) rectangle (\cvsidebarframerightvalue,\cvsidebarframebottomvalue);
+  \fill[cvbg]
+    (\cvsidebarframecutleftvalue,\cvsidebarframetopvalue-\cvsidebarframecutrisevalue)
+    -- (\cvsidebarframecutrightvalue,\cvsidebarframetopvalue+\cvsidebarframecutdropvalue)
+    -- (\cvsidebarframecutleftvalue,\cvsidebarframetopvalue+\cvsidebarframecutdropvalue)
+    -- cycle;
 
   \begin{scope}
     \clip[rounded corners=4.5mm] (\cvphotomarginvalue,\cvphotomarginvalue) rectangle (60.33,33.01);

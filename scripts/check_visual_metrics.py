@@ -157,7 +157,7 @@ def main() -> int:
         checks.append((f"main section {idx}: rule centered on title box", abs(value), LIMITS["mainsection_rule_center_delta_pt"]))
     for idx, value in enumerate(require(metrics, "sideheading_arrow_height_delta_pt"), start=1):
         checks.append((
-            f"sidebar heading {idx}: arrow vertical box equals heading text box",
+            f"sidebar heading {idx}: arrow vertical box equals configured arrow height",
             abs(value),
             LIMITS["sideheading_arrow_height_delta_pt"],
         ))

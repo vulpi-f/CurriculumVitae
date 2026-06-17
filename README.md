@@ -80,11 +80,17 @@ Current high-impact controls in `cv.tex`:
   `\cvmainbodygapshare`, `\cvmaindividergapshare`, and
   `\cvmainsectiongapshare`; the three shares are intended to sum to `1`, and
   equal shares produce equal individual gap sizes.
-- `\sidearrowboxwidth`, `\sidearrowxshift`, `\sidearrowtrimleft`,
-  `\sidearrowtrimbottom`, `\sidearrowtrimright`, `\sidearrowtrimtop`,
-  `\sideheadinggap`: left-column chevron fixed marker box, artwork crop,
-  horizontal correction, and heading spacing. `\sideheadinggap` is derived so
-  heading text aligns with the publication-title text box.
+- `\sideheadingfontsize`, `\sidearrowheight`, `\sidearrowboxwidth`,
+  `\sidearrowxshift`, `\sidearrowtrimleft`, `\sidearrowtrimbottom`,
+  `\sidearrowtrimright`, `\sidearrowtrimtop`, `\sideheadingtextoffset`,
+  `\sideheadinggap`, `\pubheadinggap`: left-column heading size, chevron
+  height, fixed marker box, artwork crop, horizontal correction, and heading
+  spacing. `\sideheadingtextoffset` keeps the larger chevron from crowding the
+  title text while `\pubheadinggap` keeps the publication title on its row grid.
+- `\cvsidebarframecutleftvalue`, `\cvsidebarframecutrightvalue`,
+  `\cvsidebarframecutrisevalue`, and `\cvsidebarframecutdropvalue`: triangular
+  sidebar-frame cutout that aligns the top border with the extended upper rear
+  edge of the first chevron.
 - `\sectiontitlegap`: gap between the main-column section titles and the
   horizontal rules.  `\mainsection` measures the title and computes both rule
   widths from `\linewidth`, so the rule pair is anchored to the right-column
