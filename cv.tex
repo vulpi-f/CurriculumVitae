@@ -47,7 +47,7 @@
 \newlength{\cvsidebarcontentheight}
 \newlength{\cvmaincontentheight}
 \newcommand{\cvsidebarframetopvalue}{39.02}
-\newcommand{\cvsideframetopinsetvalue}{2.00}
+\newcommand{\cvsideframetopinsetvalue}{0.34}
 \pgfmathsetmacro{\cvsidebarcontenttopvalue}{\cvsidebarframetopvalue+\cvsideframetopinsetvalue}
 \setlength{\cvcontentbottom}{292.55mm}
 \setlength{\cvsidebarframetop}{\cvsidebarframetopvalue mm}
@@ -60,10 +60,15 @@
 \newcommand{\cvsideobjectgap}{0pt plus 1fill}
 \newcommand{\cvmainflowgap}{\par\vspace{\cvmainobjectgap}}
 \newcommand{\cvsideflowgap}{\par\vspace{\cvsideobjectgap}}
+\newcommand{\cvsidestartflowgap}{\vspace*{\cvsideobjectgap}}
 % Sidebar tuning knobs:
-% - \cvsideframetopinsetvalue moves ABOUT ME down/up from the top frame line.
-% - \cvsideobjectgap distributes macro objects in the sidebar.
-% - \cvsidebeforepublicationsgap adjusts the elastic gap above PUBLICATIONS.
+% - \cvsideframetopinsetvalue aligns the sidebar minipage with the inner
+%   edge of the top frame rule; the visible top padding is elastic.
+% - \cvsideobjectgap distributes macro objects in the sidebar: title/content
+%   boundaries, section-to-section boundaries, and publication-to-publication
+%   gaps all share this same stretchable rhythm.
+% - \cvsidestartflowgap preserves the first elastic gap at minipage top, where
+%   plain \vspace would be discarded.
 % - The remaining \cvside... and \cvskill... constants tune sidebar micro-gaps.
 \newcommand{\cvsidebeforepublicationsgap}{\cvsideflowgap}
 \newcommand{\cvsideheadingcontentgap}{\cvsideobjectgap}
@@ -74,7 +79,7 @@
 \newcommand{\cvsoftskilltopsep}{0pt}
 \newcommand{\cvskillgroupvspace}{0.68mm}
 \newcommand{\cvskillrowgap}{0.22mm}
-\newcommand{\cvlangbarvspace}{0.68mm}
+\newcommand{\cvlangbarvspace}{\cvskillrowgap}
 \newcommand{\cvsidepubentrygap}{\cvsideobjectgap}
 \newcommand{\cvsidecolumnwidth}{55.0mm}
 \newcommand{\cvskillseparator}[1]{\hspace{#1}\vrule\hspace{#1}}
@@ -313,6 +318,7 @@
 
   \node[anchor=north west,inner sep=0pt] at (2.65,\cvsidebarcontenttopvalue) {%
     \begin{minipage}[t][\cvsidebarcontentheight][s]{\cvsidecolumnwidth}
+      \cvsidestartflowgap
       \sideheading{ABOUT ME}
       {\fontsize{\cvsidebodyfontsize}{\cvsidebodybaselineskip}\selectfont
       Daring and versatile, I firmly believe\\
