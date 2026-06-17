@@ -72,7 +72,8 @@ Current high-impact controls in `cv.tex`:
 - `\sidearrowboxwidth`, `\sidearrowxshift`, `\sidearrowtrimleft`,
   `\sidearrowtrimbottom`, `\sidearrowtrimright`, `\sidearrowtrimtop`,
   `\sideheadinggap`: left-column chevron fixed marker box, artwork crop,
-  horizontal correction, and heading spacing.
+  horizontal correction, and heading spacing. `\sideheadinggap` is derived so
+  heading text aligns with the publication-title text box.
 - `\sectiontitlegap`: gap between the main-column section titles and the
   horizontal rules.  `\mainsection` measures the title and computes both rule
   widths from `\linewidth`, so the rule pair is anchored to the right-column
