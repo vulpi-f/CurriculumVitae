@@ -12,6 +12,7 @@
 \usepackage{eso-pic}
 \usepackage{fontawesome5}
 \usepackage{hyperref}
+\usepackage{accsupp}
 \usepackage{enumitem}
 \usepackage{ragged2e}
 \usepackage{microtype}
@@ -235,7 +236,6 @@
 \renewcommand{\familydefault}{LinuxBiolinumT-LF}
 \newcommand{\wide}[1]{{\sans\bfseries\textls[180]{#1}}}
 \newcommand{\cvlink}[2]{\href{#1}{\textcolor{cvteal}{\underline{#2}}}}
-\newcommand{\headerlink}[2]{\href{#1}{\textcolor{white}{\underline{#2}}}}
 \newcommand{\cvheaderheightvalue}{36.10}
 \newcommand{\cvheadernameyvalue}{4.41}
 \newcommand{\cvheadernamefontsize}{27.4}
@@ -257,14 +257,21 @@
 \newcommand{\cvheadernamefont}{\sans\bfseries\fontsize{\cvheadernamefontsize}{\cvheadernamebaselineskip}\selectfont}
 \newcommand{\cvheadersubtitlefont}{\sans\fontseries{semibold}\fontsize{\cvheadersubtitlefontsize}{\cvheadersubtitlebaselineskip}\selectfont}
 
-\newcommand{\headeritem}[3]{%
+\newcommand{\headericon}[1]{%
+  \mbox{%
+    \BeginAccSupp{ActualText={}}%
+    \textcolor{white}{\faIcon{#1}}%
+    \EndAccSupp{}%
+  }%
+}
+\newcommand{\headertextseparator}{%
+  \BeginAccSupp{method=hex,unicode,ActualText=000A,space}%
+  \EndAccSupp{}%
+}
+\newcommand{\headeritem}[2]{%
   {\sans\fontseries{regular}\fontsize{\cvheaderitemfontsize}{\cvheaderitembaselineskip}\selectfont
-  \textcolor{white}{\faIcon{#1}}\hspace{\cvheaderitemicongap}%
-  \if\relax\detokenize{#2}\relax
-    \textcolor{white}{#3}%
-  \else
-    \headerlink{#2}{#3}%
-  \fi}%
+  \headericon{#1}\hspace{\cvheaderitemicongap}%
+  \mbox{#2}\headertextseparator}%
 }
 
 \makeatletter
@@ -687,17 +694,17 @@
       {\makebox(0,0)[t]{\textcolor{white}{\cvheadersubtitlefont Ph.D. in Mechanical Engineering and Management}}}%
 
     \put(\LenToUnit{\cvheadercontactleftxvalue mm},\LenToUnit{-\cvheadercontactrowoneyvalue mm})
-      {\makebox(0,0)[l]{\headeritem{phone}{}{+39 3803485030}}}%
+      {\makebox(0,0)[l]{\headeritem{phone}{\textcolor{white}{+39 3803485030}}}}%
     \put(\LenToUnit{\cvheadercontactcenterxvalue mm},\LenToUnit{-\cvheadercontactrowoneyvalue mm})
-      {\makebox(0,0){\headeritem{map-marker-alt}{}{70124, Bari (BA), Italy}}}%
+      {\makebox(0,0){\headeritem{map-marker-alt}{\textcolor{white}{70124, Bari (BA), Italy}}}}%
     \put(\LenToUnit{\cvheadercontactrightxvalue mm},\LenToUnit{-\cvheadercontactrowoneyvalue mm})
-      {\makebox(0,0)[r]{\headeritem{calendar-alt}{}{21/12/1995}}}%
+      {\makebox(0,0)[r]{\headeritem{calendar-alt}{\textcolor{white}{21/12/1995}}}}%
     \put(\LenToUnit{\cvheadercontactleftxvalue mm},\LenToUnit{-\cvheadercontactrowtwoyvalue mm})
-      {\makebox(0,0)[l]{\headeritem{linkedin}{https://linkedin.com/in/fabio-vulpi}{linkedin.com/in/fabio-vulpi}}}%
+      {\makebox(0,0)[l]{\headeritem{linkedin}{\href{https://linkedin.com/in/fabio-vulpi}{\textcolor{white}{\underline{linkedin.com/in/fabio-vulpi}}}}}}%
     \put(\LenToUnit{\cvheadercontactcenterxvalue mm},\LenToUnit{-\cvheadercontactrowtwoyvalue mm})
-      {\makebox(0,0){\headeritem{github}{https://github.com/vulpi-f}{github.com/vulpi-f}}}%
+      {\makebox(0,0){\headeritem{github}{\href{https://github.com/vulpi-f}{\textcolor{white}{\underline{github.com/vulpi-f}}}}}}%
     \put(\LenToUnit{\cvheadercontactrightxvalue mm},\LenToUnit{-\cvheadercontactrowtwoyvalue mm})
-      {\makebox(0,0)[r]{\headeritem{envelope}{}{vulpi.fabio@gmail.com}}}%
+      {\makebox(0,0)[r]{\headeritem{envelope}{\textcolor{white}{vulpi.fabio@gmail.com}}}}%
   }%
 }
 \end{document}
