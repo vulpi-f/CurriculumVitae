@@ -84,11 +84,12 @@
 % match the same elastic gap rendered elsewhere.
 \newcommand{\cvaboutheadingcontenttrim}{-1.10mm}
 \newcommand{\cvsoftskillheadingcontenttrim}{-1.20mm}
-\newcommand{\cvpublicationheadingtoptrim}{0.25mm}
-\newcommand{\cvpublicationheadingcontenttrim}{-3.10mm}
+\newcommand{\cvpublicationheadingtoptrim}{1.15mm}
+\newcommand{\cvpublicationheadingcontenttrim}{-2.15mm}
 \newcommand{\cvskillgroupvspace}{\cvsideobjectgap}
 \newcommand{\cvskillrowgap}{0.22mm}
 \newcommand{\cvlangbarvspace}{\cvskillrowgap}
+\newcommand{\cvlangentryvspace}{\cvskillrowgap}
 \newcommand{\cvsidepubentrygap}{\cvsideobjectgap}
 \newcommand{\cvsidecolumnwidth}{55.0mm}
 \newcommand{\cvskillseparator}[1]{\hspace{#1}\vrule\hspace{#1}}
@@ -371,9 +372,9 @@
       \cvsideflowgap
       \sideheading{LANGUAGES}
       \langbar{Italiano}{C 2}{45.5}
-      \cvsideflowgap
+      \vspace{\cvlangentryvspace}
       \langbar{English}{C 1}{38.0}
-      \cvsideflowgap
+      \vspace{\cvlangentryvspace}
       \langbar{Deutsch}{A 2}{15.0}
 
       \cvsidebeforepublicationsgap
