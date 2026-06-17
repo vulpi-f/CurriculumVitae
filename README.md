@@ -26,10 +26,12 @@ to fail fast when text edits accidentally break the planned visual alignment:
 - `page_margin_*` and `column_gutter_*`: horizontal geometry derived from the
   header photo margin, including equal outer margins and equal gutters around
   the sidebar frame rule.
-- `main_auto_gap_count_pt`, `main_auto_gap_pt`, and
-  `main_auto_gap_balance_delta_pt`: right-column content is measured with zero
-  gaps, the remaining height is divided across the counted transitions, and the
-  result must fill the frame exactly while staying positive.
+- `main_auto_gap_count_pt`, `main_auto_gap_pt`,
+  `main_auto_divider_gap_pt`, `main_auto_section_gap_pt`, and
+  `main_auto_gap_balance_delta_pt`:
+  right-column content is measured with zero gaps, the remaining height is
+  divided across ordinary, divider-rule, and section-title transitions, and
+  the result must fill the frame exactly while staying non-negative.
 - `mainsection_rule_center_delta_pt`: horizontal rules beside titles such as
   `AWARDS` versus the measured title-box centre.
 - `divider_gap_delta_pt`: symmetry check for the vertical gaps around
@@ -67,8 +69,13 @@ Current high-impact controls in `cv.tex`:
   x coordinate and both gutters are derived from these plus `\cvphotomarginvalue`.
 - `\cvmaincontent` and `\cvpreparemainlayout`: right-column content and its
   automatic vertical rhythm. The layout measures the natural content height,
-  counts every title/location/description/divider transition through
-  `\cvmaingap`, and computes one equal gap to fill `\cvmaincontentheight`.
+  counts ordinary title/location/description transitions through `\cvmaingap`,
+  counts divider-rule transitions through `\cvmaindividergap`, counts
+  section-title transitions through `\cvmainsectiongap`, and fills
+  `\cvmaincontentheight` with separate computed gaps. Tune
+  `\cvmainbodygapshare`, `\cvmaindividergapshare`, and
+  `\cvmainsectiongapshare`; the three shares are intended to sum to `1`, and
+  equal shares produce equal individual gap sizes.
 - `\sidearrowboxwidth`, `\sidearrowxshift`, `\sidearrowtrimleft`,
   `\sidearrowtrimbottom`, `\sidearrowtrimright`, `\sidearrowtrimtop`,
   `\sideheadinggap`: left-column chevron fixed marker box, artwork crop,
@@ -81,6 +88,8 @@ Current high-impact controls in `cv.tex`:
 - `\cvskillgroupvspace`, `\cvlangbarvspace`, `\cvsidebeforepublicationsgap`:
   left-column vertical rhythm controls for the digital-skills groups, language
   bars, and the gap before the publications heading.
+- `\cvsoftskilltriangleheightvalue`, `\cvsoftskilltrianglerule`: soft-skill
+  triangle height and stroke thickness.
 - `\pubiconwidth`, `\pubiconboxwidth`, `\pubicongap`, `\publinkiconsize`,
   `\pubicontrimleft`, `\pubicontrimbottom`, `\pubicontrimright`,
   `\pubicontrimtop`, `\pubboxvisualtoptrim`, `\pubboxvisualbottomtrim`,

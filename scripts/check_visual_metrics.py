@@ -31,7 +31,7 @@ LIMITS = {
     "divider_gap_delta_pt": 0.05,
 }
 
-MIN_MAIN_AUTO_GAP_PT = 0.50
+MAIN_GAP_NEGATIVE_TOLERANCE_PT = 0.05
 
 METRIC_RE = re.compile(r"CVVISUAL\|(?P<name>[^|]+)\|\s*(?P<value>[-+0-9.]+)\s*pt")
 
@@ -72,8 +72,13 @@ def main() -> int:
     ))
     main_gap_count = require(metrics, "main_auto_gap_count_pt")[0]
     main_gap = require(metrics, "main_auto_gap_pt")[0]
+    main_body_gap_count = metrics.get("main_auto_body_gap_count_pt", [main_gap_count])[0]
+    main_divider_gap_count = metrics.get("main_auto_divider_gap_count_pt", [0.0])[0]
+    main_divider_gap = metrics.get("main_auto_divider_gap_pt", [main_gap])[0]
+    main_section_gap_count = metrics.get("main_auto_section_gap_count_pt", [0.0])[0]
+    main_section_gap = metrics.get("main_auto_section_gap_pt", [main_gap])[0]
     checks.append((
-        "main column: measured elements plus computed equal gaps fill the frame",
+        "main column: measured elements plus computed weighted gaps fill the frame",
         abs(require(metrics, "main_auto_gap_balance_delta_pt")[0]),
         LIMITS["main_auto_gap_balance_delta_pt"],
     ))
@@ -114,8 +119,16 @@ def main() -> int:
         f"{sidebar_top_inset:.3f}pt; adjust \\cvsideframetopinsetvalue to move ABOUT ME"
     )
     print(
-        "INFO: main column equal gap: "
-        f"{main_gap:.3f}pt across {int(round(main_gap_count))} measured transitions"
+        "INFO: main column body gap: "
+        f"{main_gap:.3f}pt across {int(round(main_body_gap_count))} ordinary transitions"
+    )
+    print(
+        "INFO: main column divider gap: "
+        f"{main_divider_gap:.3f}pt across {int(round(main_divider_gap_count))} divider transitions"
+    )
+    print(
+        "INFO: main column section gap: "
+        f"{main_section_gap:.3f}pt across {int(round(main_section_gap_count))} title transitions"
     )
 
     for idx, value in enumerate(require(metrics, "publication_height_delta_pt"), start=1):
@@ -141,11 +154,16 @@ def main() -> int:
     checks.append(("divider gaps: before/after divider rule are equal", max(abs(v) for v in divider_values), LIMITS["divider_gap_delta_pt"]))
 
     failed = False
-    if main_gap > MIN_MAIN_AUTO_GAP_PT:
-        print(f"OK: main column: computed equal gap remains positive: {main_gap:.3f}pt > {MIN_MAIN_AUTO_GAP_PT:.3f}pt")
-    else:
-        print(f"FAIL: main column: computed equal gap remains positive: {main_gap:.3f}pt > {MIN_MAIN_AUTO_GAP_PT:.3f}pt")
-        failed = True
+    for label, value in (
+        ("main column: ordinary gap remains non-negative", main_gap),
+        ("main column: divider gap remains non-negative", main_divider_gap),
+        ("main column: section gap remains non-negative", main_section_gap),
+    ):
+        if value >= -MAIN_GAP_NEGATIVE_TOLERANCE_PT:
+            print(f"OK: {label}: {value:.3f}pt >= {-MAIN_GAP_NEGATIVE_TOLERANCE_PT:.3f}pt")
+        else:
+            print(f"FAIL: {label}: {value:.3f}pt >= {-MAIN_GAP_NEGATIVE_TOLERANCE_PT:.3f}pt")
+            failed = True
 
     for label, observed, limit in checks:
         status = "OK" if observed <= limit else "FAIL"

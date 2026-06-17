@@ -35,9 +35,9 @@
 %   Canva/reference PDF.  When retouching, prefer changing only the named
 %   constants below before moving content coordinates.
 % - The main-column rhythm is measured, not tuned: the content is first boxed
-%   with zero vertical gaps, the remaining height is divided by the counted
-%   title/location/description/divider transitions, then that one computed gap
-%   is used everywhere to fill the column exactly.
+%   with zero vertical gaps, the remaining height is divided across three
+%   weighted gap types: ordinary content gaps, divider-rule gaps, and
+%   section-title gaps.
 % - Publication link badges compute their height from the text box plus visual
 %   trim offsets. The link artwork is centered in a square inner box whose
 %   center is the badge center.
@@ -92,12 +92,23 @@
 \setlength{\cvsidebarcontentheight}{\dimexpr\cvcontentbottom-\cvsidebarcontenttop\relax}
 \setlength{\cvmaincontentheight}{\dimexpr\cvcontentbottom-\cvmaincontenttop\relax}
 \newlength{\cvmaincomputedgap}
+\newlength{\cvmaincomputeddividergap}
+\newlength{\cvmaincomputedsectiongap}
 \newlength{\cvmainnaturalheight}
+\newlength{\cvmainremainingheight}
+\newlength{\cvmainweightedgapunit}
 \newlength{\cvmainusedheight}
 \newcount\cvmaingapcount
+\newcount\cvmainbodygapcount
+\newcount\cvmaindividergapcount
+\newcount\cvmainsectiongapcount
 \newif\ifcvmainmeasuring
 \newif\ifcvsuppressmetrics
 \newsavebox{\cvmainmeasurebox}
+% Keep these three shares summing to 1; equal shares produce equal gap sizes.
+\newcommand{\cvmainbodygapshare}{0.25}
+\newcommand{\cvmaindividergapshare}{0.30}
+\newcommand{\cvmainsectiongapshare}{0.45}
 \newcommand{\cvsideobjectgap}{0pt plus 1fill}
 \newcommand{\cvsideflowgap}{\par\vspace{\cvsideobjectgap}}
 \newcommand{\cvsidestartflowgap}{\vspace*{\cvsideobjectgap}}
@@ -116,10 +127,8 @@
 \newcommand{\cvsidebodyfontsize}{9.85}
 \newcommand{\cvsidebodybaselineskip}{12.75}
 \newcommand{\cvskillbodybaselineskip}{11.8}
-\newcommand{\cvsoftskilllabelwidth}{1.25mm}
-\newcommand{\cvsoftskilllabelsep}{2.15mm}
-\newcommand{\cvsoftskillitemsep}{0.28mm}
-\newcommand{\cvsoftskilltopsep}{0pt}
+\newcommand{\cvsoftskilltriangleheightvalue}{12.0}
+\newcommand{\cvsoftskilltrianglerule}{0.42pt}
 % Fixed visual trims compensate the top line boxes of the following content
 % objects.  The stretchable spacing itself remains \cvsideobjectgap; these
 % trims only make the visible whitespace around selected sidebar headings
@@ -219,15 +228,38 @@
 \newcommand{\cvmaingap}{%
   \ifcvmainmeasuring
     \global\advance\cvmaingapcount by 1
+    \global\advance\cvmainbodygapcount by 1
   \fi
   \vspace{\cvmaincomputedgap}%
 }
 
+\newcommand{\cvmainsectiongap}{%
+  \ifcvmainmeasuring
+    \global\advance\cvmaingapcount by 1
+    \global\advance\cvmainsectiongapcount by 1
+  \fi
+  \vspace{\cvmaincomputedsectiongap}%
+}
+
+\newcommand{\cvmaindividergap}{%
+  \ifcvmainmeasuring
+    \global\advance\cvmaingapcount by 1
+    \global\advance\cvmaindividergapcount by 1
+  \fi
+  \vspace{\cvmaincomputeddividergap}%
+}
+
 \newcommand{\cvmainflowgap}{\par\cvmaingap}
+\newcommand{\cvmainsectionflowgap}{\par\cvmainsectiongap}
 
 \newcommand{\cvpreparemainlayout}{%
   \setlength{\cvmaincomputedgap}{0pt}%
+  \setlength{\cvmaincomputeddividergap}{0pt}%
+  \setlength{\cvmaincomputedsectiongap}{0pt}%
   \global\cvmaingapcount=0
+  \global\cvmainbodygapcount=0
+  \global\cvmaindividergapcount=0
+  \global\cvmainsectiongapcount=0
   \cvmainmeasuringtrue
   \cvsuppressmetricstrue
   \sbox{\cvmainmeasurebox}{%
@@ -237,10 +269,25 @@
   \cvsuppressmetricsfalse
   \cvmainmeasuringfalse
   \setlength{\cvmainnaturalheight}{\dimexpr\ht\cvmainmeasurebox+\dp\cvmainmeasurebox\relax}%
-  \setlength{\cvmaincomputedgap}{\dimexpr(\cvmaincontentheight-\cvmainnaturalheight)/\cvmaingapcount\relax}%
-  \setlength{\cvmainusedheight}{\dimexpr\cvmainnaturalheight+\number\cvmaingapcount\cvmaincomputedgap\relax}%
+  \setlength{\cvmainremainingheight}{\dimexpr\cvmaincontentheight-\cvmainnaturalheight\relax}%
+  \ifnum\cvmaingapcount>0
+    \pgfmathsetlength{\cvmainweightedgapunit}{\cvmainremainingheight/(\the\cvmainbodygapcount*\cvmainbodygapshare+\the\cvmaindividergapcount*\cvmaindividergapshare+\the\cvmainsectiongapcount*\cvmainsectiongapshare)}%
+    \pgfmathsetlength{\cvmaincomputedgap}{\cvmainweightedgapunit*\cvmainbodygapshare}%
+    \pgfmathsetlength{\cvmaincomputeddividergap}{\cvmainweightedgapunit*\cvmaindividergapshare}%
+    \pgfmathsetlength{\cvmaincomputedsectiongap}{\cvmainweightedgapunit*\cvmainsectiongapshare}%
+  \else
+    \setlength{\cvmaincomputedgap}{0pt}%
+    \setlength{\cvmaincomputeddividergap}{0pt}%
+    \setlength{\cvmaincomputedsectiongap}{0pt}%
+  \fi
+  \setlength{\cvmainusedheight}{\dimexpr\cvmainnaturalheight+\number\cvmainbodygapcount\cvmaincomputedgap+\number\cvmaindividergapcount\cvmaincomputeddividergap+\number\cvmainsectiongapcount\cvmaincomputedsectiongap\relax}%
   \cvmetricdim{main_auto_gap_count_pt}{\number\cvmaingapcount pt}%
+  \cvmetricdim{main_auto_body_gap_count_pt}{\number\cvmainbodygapcount pt}%
+  \cvmetricdim{main_auto_divider_gap_count_pt}{\number\cvmaindividergapcount pt}%
+  \cvmetricdim{main_auto_section_gap_count_pt}{\number\cvmainsectiongapcount pt}%
   \cvmetricdim{main_auto_gap_pt}{\cvmaincomputedgap}%
+  \cvmetricdim{main_auto_divider_gap_pt}{\cvmaincomputeddividergap}%
+  \cvmetricdim{main_auto_section_gap_pt}{\cvmaincomputedsectiongap}%
   \cvmetricdim{main_auto_gap_balance_delta_pt}{\cvmainusedheight-\cvmaincontentheight}%
 }
 
@@ -277,6 +324,22 @@
     \fill[cvteal,rounded corners=0.65mm] (0,0) rectangle (#3,1.65);
   \end{tikzpicture}%
   \hfill{\fontsize{10.4}{11.0}\selectfont #2}\par
+}
+
+\newcommand{\softskilltriangle}{%
+  \noindent
+  \begin{tikzpicture}[x=1mm,y=1mm,baseline=(current bounding box.north)]
+    \path[use as bounding box] (0,0) rectangle (\cvsidecolumnwidthvalue,\cvsoftskilltriangleheightvalue);
+    \coordinate (softtop) at (27.50,9.20);
+    \coordinate (softleft) at (15.70,2.80);
+    \coordinate (softright) at (39.30,2.80);
+    \draw[cvteal,line width=\cvsoftskilltrianglerule,line join=round]
+      (softtop) -- (softright) -- (softleft) -- cycle;
+    \fill[cvteal] (softtop) circle (0.42) (softleft) circle (0.42) (softright) circle (0.42);
+    \node[anchor=center,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (softtop) {Pragmatic};
+    \node[anchor=center,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (softleft) {Team working};
+    \node[anchor=center,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (softright) {Result Oriented};
+  \end{tikzpicture}\par
 }
 
 \newsavebox{\pubtextbox}
@@ -352,7 +415,7 @@
     \raisebox{\sectionruleraise}{\textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}}%
     \hspace{\sectiontitlegap}\usebox{\sectiontitlebox}%
     \hspace{\sectiontitlegap}\raisebox{\sectionruleraise}{\textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}}%
-  }\par\cvmainflowgap
+  }\par\cvmainsectiongap
 }
 
 \newcommand{\entry}[5]{%
@@ -367,8 +430,8 @@
 }
 
 \newcommand{\divider}{%
-  \cvmetricdim{divider_gap_delta_pt}{\cvmaincomputedgap-\cvmaincomputedgap}%
-  \par\cvmaingap\nointerlineskip\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\cvmaingap
+  \cvmetricdim{divider_gap_delta_pt}{\cvmaincomputeddividergap-\cvmaincomputeddividergap}%
+  \par\cvmaindividergap\nointerlineskip\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\cvmaindividergap
 }
 
 \newcommand{\cvitems}{%
@@ -406,7 +469,7 @@
     {Bari (IT)}
     {Built AI/ML software solutions to optimize automation workflows.}
 
-  \cvmainflowgap
+  \cvmainsectionflowgap
   \mainsection{EDUCATION}
   \entry{Ph.D. in Mechanical Engineering and Management}{11/2019 - 04/2023}
     {\cvlink{https://www.poliba.it/}{Polytechnic of Bari}}
@@ -428,7 +491,7 @@
     {Bari (IT)\hfill 109/110}
     {Performed physics-based modeling and numerical computation to investigate the nonlinear dynamics of oscillators with a bistable potential.}
 
-  \cvmainflowgap
+  \cvmainsectionflowgap
   \mainsection{AWARDS}
   \awardentry{\cvlink{https://www.ingeniarius.pt/}{Ingeniarius Ltd}\textcolor{cvtext}{\ - Porto (PT)}}{RobotCraft First Place Award - 08/2022}
     {Designed and assembled an autonomous mobile robot to explore a maze, generate LiDAR-based SLAM maps in ROS, and re-navigate through optimized paths. Developed real-time C++/Python mapping and planning algorithms and integrated Arduino-driven motor control.}
@@ -477,12 +540,7 @@
       \cvsideflowgap
       \sideheading{SOFT-SKILLS}
       \vspace{\cvsoftskillheadingcontenttrim}
-      {\fontsize{9.9}{11.1}\selectfont
-      \begin{itemize}[labelindent=0pt,labelwidth=\cvsoftskilllabelwidth,labelsep=\cvsoftskilllabelsep,leftmargin=!,align=left,itemsep=\cvsoftskillitemsep,topsep=\cvsoftskilltopsep,parsep=0pt]
-        \item Pragmatic
-        \item Team working
-        \item Result Oriented
-      \end{itemize}}
+      {\fontsize{9.9}{11.1}\selectfont\softskilltriangle}
 
       \cvsideflowgap
       \sideheading{DIGITAL SKILLS}
