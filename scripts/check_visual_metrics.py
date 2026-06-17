@@ -13,6 +13,7 @@ from pathlib import Path
 
 LIMITS = {
     "sidebar_content_bottom_delta_pt": 0.10,
+    "sidebar_auto_gap_balance_delta_pt": 0.10,
     "main_content_bottom_delta_pt": 0.10,
     "main_auto_gap_balance_delta_pt": 0.10,
     "sidebar_top_inset_delta_pt": 0.05,
@@ -114,9 +115,20 @@ def main() -> int:
     ))
 
     sidebar_top_inset = require(metrics, "sidebar_top_inset_pt")[0]
+    sidebar_gap_count = require(metrics, "sidebar_auto_gap_count_pt")[0]
+    sidebar_gap = require(metrics, "sidebar_auto_gap_pt")[0]
+    checks.append((
+        "sidebar column: measured elements plus computed gaps fill the frame",
+        abs(require(metrics, "sidebar_auto_gap_balance_delta_pt")[0]),
+        LIMITS["sidebar_auto_gap_balance_delta_pt"],
+    ))
     print(
         "INFO: sidebar top gap from frame line: "
         f"{sidebar_top_inset:.3f}pt; adjust \\cvsideframetopinsetvalue to move ABOUT ME"
+    )
+    print(
+        "INFO: sidebar column object gap: "
+        f"{sidebar_gap:.3f}pt across {int(round(sidebar_gap_count))} measured transitions"
     )
     print(
         "INFO: main column body gap: "
@@ -155,6 +167,7 @@ def main() -> int:
 
     failed = False
     for label, value in (
+        ("sidebar column: object gap remains non-negative", sidebar_gap),
         ("main column: ordinary gap remains non-negative", main_gap),
         ("main column: divider gap remains non-negative", main_divider_gap),
         ("main column: section gap remains non-negative", main_section_gap),

@@ -81,6 +81,10 @@
 \newlength{\cvmaincontenttop}
 \newlength{\cvsidebarcontentheight}
 \newlength{\cvmaincontentheight}
+\newlength{\cvsidecomputedgap}
+\newlength{\cvsidenaturalheight}
+\newlength{\cvsideremainingheight}
+\newlength{\cvsideusedheight}
 \newcommand{\cvsidebarframetopvalue}{39.02}
 \newcommand{\cvsideframetopinsetvalue}{0.34}
 \pgfmathsetmacro{\cvsidebarcontenttopvalue}{\cvsidebarframetopvalue+\cvsideframetopinsetvalue}
@@ -99,49 +103,62 @@
 \newlength{\cvmainweightedgapunit}
 \newlength{\cvmainusedheight}
 \newcount\cvmaingapcount
+\newcount\cvsidegapcount
 \newcount\cvmainbodygapcount
 \newcount\cvmaindividergapcount
 \newcount\cvmainsectiongapcount
+\newif\ifcvsidemeasuring
 \newif\ifcvmainmeasuring
 \newif\ifcvsuppressmetrics
+\newsavebox{\cvsidemeasurebox}
 \newsavebox{\cvmainmeasurebox}
 % Keep these three shares summing to 1; equal shares produce equal gap sizes.
 \newcommand{\cvmainbodygapshare}{0.25}
 \newcommand{\cvmaindividergapshare}{0.30}
 \newcommand{\cvmainsectiongapshare}{0.45}
-\newcommand{\cvsideobjectgap}{0pt plus 1fill}
-\newcommand{\cvsideflowgap}{\par\vspace{\cvsideobjectgap}}
-\newcommand{\cvsidestartflowgap}{\vspace*{\cvsideobjectgap}}
+\setlength{\cvsidecomputedgap}{0pt}
+\newcommand{\cvsideobjectgap}{\cvsidecomputedgap}
+\newcommand{\cvsidegap}{%
+  \ifcvsidemeasuring
+    \global\advance\cvsidegapcount by 1
+  \fi
+  \vspace{\cvsidecomputedgap}%
+}
+\newcommand{\cvsideflowgap}{\par\cvsidegap}
+\newcommand{\cvsidestartflowgap}{%
+  \ifcvsidemeasuring
+    \global\advance\cvsidegapcount by 1
+  \fi
+  \vspace*{\cvsidecomputedgap}%
+}
 % Sidebar tuning knobs:
 % - \cvsideframetopinsetvalue aligns the sidebar minipage with the inner
-%   edge of the top frame rule; the visible top padding is elastic.
-% - \cvsideobjectgap distributes macro objects in the sidebar: title/content
-%   boundaries, section-to-section boundaries, and publication-to-publication
-%   gaps all share this same stretchable rhythm; skill-subgroup title/content
-%   boundaries use it too.
-% - \cvsidestartflowgap preserves the first elastic gap at minipage top, where
+%   edge of the top frame rule; the visible top padding is computed.
+% - \cvsideobjectgap is computed from the measured natural sidebar height, so
+%   title/content boundaries, section-to-section boundaries, skill-subgroup
+%   title/content boundaries, and publication gaps all share one fixed rhythm.
+% - \cvsidestartflowgap preserves the first computed gap at minipage top, where
 %   plain \vspace would be discarded.
 % - The remaining \cvside... and \cvskill... constants tune sidebar micro-gaps.
 \newcommand{\cvsidebeforepublicationsgap}{\cvsideflowgap}
-\newcommand{\cvsideheadingcontentgap}{\cvsideobjectgap}
+\newcommand{\cvsideheadingcontentgap}{\cvsidegap}
 \newcommand{\cvsidebodyfontsize}{9.85}
 \newcommand{\cvsidebodybaselineskip}{12.75}
 \newcommand{\cvskillbodybaselineskip}{11.8}
-\newcommand{\cvsoftskilltriangleheightvalue}{12.0}
+\newcommand{\cvsoftskilltriangleheightvalue}{10.8}
 \newcommand{\cvsoftskilltrianglerule}{0.42pt}
 % Fixed visual trims compensate the top line boxes of the following content
-% objects.  The stretchable spacing itself remains \cvsideobjectgap; these
-% trims only make the visible whitespace around selected sidebar headings
-% match the same elastic gap rendered elsewhere.
+% objects.  The measured spacing itself remains \cvsideobjectgap; these trims
+% only make selected heading/content visual whitespace match that shared gap.
 \newcommand{\cvaboutheadingcontenttrim}{-1.10mm}
-\newcommand{\cvsoftskillheadingcontenttrim}{-1.20mm}
+\newcommand{\cvsoftskillheadingcontenttrim}{0pt}
 \newcommand{\cvpublicationheadingtoptrim}{1.15mm}
 \newcommand{\cvpublicationheadingcontenttrim}{-2.15mm}
-\newcommand{\cvskillgroupvspace}{\cvsideobjectgap}
+\newcommand{\cvskillgroupvspace}{\cvsidegap}
 \newcommand{\cvskillrowgap}{0.22mm}
 \newcommand{\cvlangbarvspace}{\cvskillrowgap}
 \newcommand{\cvlangentryvspace}{\cvskillrowgap}
-\newcommand{\cvsidepubentrygap}{\cvsideobjectgap}
+\newcommand{\cvsidepubentrygap}{\cvsidegap}
 \newcommand{\cvsidecolumnwidth}{\cvsidecolumnwidthvalue mm}
 \newcommand{\cvskillseparator}[1]{\hspace{#1}\vrule\hspace{#1}}
 \newcommand{\cvskillphysicssep}{5.68mm}
@@ -291,6 +308,30 @@
   \cvmetricdim{main_auto_gap_balance_delta_pt}{\cvmainusedheight-\cvmaincontentheight}%
 }
 
+\newcommand{\cvpreparesidelayout}{%
+  \setlength{\cvsidecomputedgap}{0pt}%
+  \global\cvsidegapcount=0
+  \cvsidemeasuringtrue
+  \cvsuppressmetricstrue
+  \sbox{\cvsidemeasurebox}{%
+    \begin{minipage}[t]{\cvsidecolumnwidth}
+      \cvsidecontent
+    \end{minipage}}%
+  \cvsuppressmetricsfalse
+  \cvsidemeasuringfalse
+  \setlength{\cvsidenaturalheight}{\dimexpr\ht\cvsidemeasurebox+\dp\cvsidemeasurebox\relax}%
+  \setlength{\cvsideremainingheight}{\dimexpr\cvsidebarcontentheight-\cvsidenaturalheight\relax}%
+  \ifnum\cvsidegapcount>0
+    \pgfmathsetlength{\cvsidecomputedgap}{\cvsideremainingheight/\the\cvsidegapcount}%
+  \else
+    \setlength{\cvsidecomputedgap}{0pt}%
+  \fi
+  \setlength{\cvsideusedheight}{\dimexpr\cvsidenaturalheight+\number\cvsidegapcount\cvsidecomputedgap\relax}%
+  \cvmetricdim{sidebar_auto_gap_count_pt}{\number\cvsidegapcount pt}%
+  \cvmetricdim{sidebar_auto_gap_pt}{\cvsidecomputedgap}%
+  \cvmetricdim{sidebar_auto_gap_balance_delta_pt}{\cvsideusedheight-\cvsidebarcontentheight}%
+}
+
 \newcommand{\sideheading}[1]{%
   \sbox{\sideheadingtextbox}{\sans\bfseries\fontsize{15.3}{16.1}\selectfont #1}%
   \setlength{\sideheadingheight}{\dimexpr\ht\sideheadingtextbox+\dp\sideheadingtextbox\relax}%
@@ -307,12 +348,12 @@
   \noindent
   \makebox[\sidearrowboxwidth][c]{\hspace{\sidearrowxshift}\usebox{\sidearrowtextbox}}%
   \hspace{\sideheadinggap}\usebox{\sideheadingtextbox}\par
-  \vspace{\cvsideheadingcontentgap}%
+  \cvsideheadingcontentgap
 }
 
 \newcommand{\skillgroup}[2]{%
   {\centering{\sans\bfseries\fontsize{12.5}{13.2}\selectfont\color{cvteal}#1}\par}
-  \vspace{\cvskillgroupvspace}
+  \cvskillgroupvspace
   {\fontsize{\cvsidebodyfontsize}{\cvskillbodybaselineskip}\selectfont #2\par}
 }
 
@@ -328,17 +369,18 @@
 
 \newcommand{\softskilltriangle}{%
   \noindent
-  \begin{tikzpicture}[x=1mm,y=1mm,baseline=(current bounding box.north)]
+  \begin{tikzpicture}[x=1mm,y=-1mm,baseline=(softbaseline)]
     \path[use as bounding box] (0,0) rectangle (\cvsidecolumnwidthvalue,\cvsoftskilltriangleheightvalue);
-    \coordinate (softtop) at (27.50,9.20);
-    \coordinate (softleft) at (15.70,2.80);
-    \coordinate (softright) at (39.30,2.80);
+    \coordinate (softbaseline) at (0,\cvsoftskilltriangleheightvalue);
+    \coordinate (softtop) at ({0.5*\cvsidecolumnwidthvalue},1.50);
+    \coordinate (softleft) at (16.25,8.20);
+    \coordinate (softright) at ({\cvsidecolumnwidthvalue-16.25},8.20);
     \draw[cvteal,line width=\cvsoftskilltrianglerule,line join=round]
       (softtop) -- (softright) -- (softleft) -- cycle;
     \fill[cvteal] (softtop) circle (0.42) (softleft) circle (0.42) (softright) circle (0.42);
     \node[anchor=center,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (softtop) {Pragmatic};
-    \node[anchor=center,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (softleft) {Team working};
-    \node[anchor=center,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (softright) {Result Oriented};
+    \node[anchor=west,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (0,8.20) {Team working};
+    \node[anchor=east,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (\cvsidecolumnwidthvalue,8.20) {Result Oriented};
   \end{tikzpicture}\par
 }
 
@@ -382,7 +424,7 @@
   \noindent
   \orcidicon%
   \hspace{\sideheadinggap}\usebox{\pubheadingtextbox}\par
-  \vspace{\cvsideheadingcontentgap}%
+  \cvsideheadingcontentgap
 }
 
 \newcommand{\publication}[2]{%
@@ -400,7 +442,7 @@
   \raisebox{\pubiconraise}{\makebox[\pubiconboxwidth][l]{\usebox{\pubiconbox}}}%
   \hspace{\pubicongap}%
   \usebox{\pubtextbox}%
-  \par\vspace{\pubentrygap}
+  \par\cvsidepubentrygap
 }
 
 \newcommand{\pubbreak}{\penalty0\ }
@@ -445,6 +487,63 @@
   \hfill{\fontsize{11.0}{12.0}\selectfont\strut #2}\par
   \cvmaingap
   {\color{cvtext}\fontsize{10.03}{13.20}\selectfont\justifying\noindent\strut #3\par}
+}
+
+\newcommand{\cvsidecontent}{%
+  \cvsidestartflowgap
+  \sideheading{ABOUT ME}
+  \vspace{\cvaboutheadingcontenttrim}
+  {\fontsize{\cvsidebodyfontsize}{\cvsidebodybaselineskip}\selectfont
+  Daring and versatile, I firmly believe\\
+  that attaining successful outcomes\\
+  relies on both the ability to ask\\
+  pertinent questions and the\\
+  commitment to finding the answers.\par}
+
+  \cvsideflowgap
+  \sideheading{SOFT-SKILLS}
+  \vspace{\cvsoftskillheadingcontenttrim}
+  {\fontsize{9.9}{11.1}\selectfont\softskilltriangle}
+
+  \cvsideflowgap
+  \sideheading{DIGITAL SKILLS}
+  \skillgroup{Physic Simulation}{%
+    \begin{tabular}{@{}l@{\cvskillseparator{\cvskillphysicssep}}l@{}}
+      MATLAB & Ansys FLUENT\\[\cvskillrowgap]
+      Simulink & Wolfram Mathematica
+    \end{tabular}}
+  \cvsideflowgap
+  \skillgroup{\textmu C programming}{%
+    \begin{tabular}{@{}l@{\cvskillseparator{\cvskillcprogsep}}l@{\cvskillseparator{\cvskillcprogsep}}l@{\cvskillseparator{\cvskillcprogsep}}l@{}}
+      Debian & Python & C & Arduino\\[\cvskillrowgap]
+      Linux & ROS & C++ & C\#
+    \end{tabular}}
+  \cvsideflowgap
+  \skillgroup{3-D Modeling}{%
+    \begin{tabular}{@{}l@{\cvskillseparator{\cvskillmodelingsep}}l@{}}
+      AutoCAD 2D & Autodesk Invetor\\[\cvskillrowgap]
+      SolidWorks & Cura (Ultimaker)\\[\cvskillrowgap]
+      MeshLab & Eagle - PCB design
+    \end{tabular}}
+
+  \cvsideflowgap
+  \sideheading{LANGUAGES}
+  \langbar{Italiano}{C 2}{45.5}
+  \vspace{\cvlangentryvspace}
+  \langbar{English}{C 1}{38.0}
+  \vspace{\cvlangentryvspace}
+  \langbar{Deutsch}{A 2}{15.0}
+
+  \cvsidebeforepublicationsgap
+  \vspace{\cvpublicationheadingtoptrim}
+  \pubheading{PUBLICATIONS}
+  \vspace{\cvpublicationheadingcontenttrim}
+  \publication{\pubicon}{Kalman Supervised Network for\pubbreak improved Model Predictions.}
+  \publication{\pubicon}{Recurrent and convolutional\pubbreak NN for deep terrain\pubbreak classification by autonomous\pubbreak robots.}
+  \publication{\pubicon}{An RGB-D multi-view\pubbreak perspective for autonomous\pubbreak agricultural robots.}
+  \publication{\pubicon}{On the role of feature and\pubbreak signal selection for terrain\pubbreak learning in planetary\pubbreak exploration.}
+  \publication{\pubicon}{Usability Study of WISE for\pubbreak Movement Assessment and\pubbreak Exercise.}
+  \publication{\pubicon}{Wearable Inertial Sensors for\pubbreak Range of Motion Assessment\pubbreak (WISE).}
 }
 
 \newcommand{\cvmaincontent}{%
@@ -501,6 +600,7 @@
 \begin{document}
 \null
 \cvpreparemainlayout
+\cvpreparesidelayout
 \begin{tikzpicture}[remember picture,overlay,x=1mm,y=-1mm]
 \begin{scope}[shift={(current page.north west)}]
   \cvframeconstraintmetrics
@@ -526,61 +626,8 @@
   \node[anchor=east] at (\cvmaincolumnrightvalue,31.55) {\headeritem{envelope}{mailto:vulpi.fabio@gmail.com}{vulpi.fabio@gmail.com}};
 
   \node[anchor=north west,inner sep=0pt] at (\cvsidecolumnxvalue,\cvsidebarcontenttopvalue) {%
-    \begin{minipage}[t][\cvsidebarcontentheight][s]{\cvsidecolumnwidth}
-      \cvsidestartflowgap
-      \sideheading{ABOUT ME}
-      \vspace{\cvaboutheadingcontenttrim}
-      {\fontsize{\cvsidebodyfontsize}{\cvsidebodybaselineskip}\selectfont
-      Daring and versatile, I firmly believe\\
-      that attaining successful outcomes\\
-      relies on both the ability to ask\\
-      pertinent questions and the\\
-      commitment to finding the answers.\par}
-
-      \cvsideflowgap
-      \sideheading{SOFT-SKILLS}
-      \vspace{\cvsoftskillheadingcontenttrim}
-      {\fontsize{9.9}{11.1}\selectfont\softskilltriangle}
-
-      \cvsideflowgap
-      \sideheading{DIGITAL SKILLS}
-      \skillgroup{Physic Simulation}{%
-        \begin{tabular}{@{}l@{\cvskillseparator{\cvskillphysicssep}}l@{}}
-          MATLAB & Ansys FLUENT\\[\cvskillrowgap]
-          Simulink & Wolfram Mathematica
-        \end{tabular}}
-      \cvsideflowgap
-      \skillgroup{\textmu C programming}{%
-        \begin{tabular}{@{}l@{\cvskillseparator{\cvskillcprogsep}}l@{\cvskillseparator{\cvskillcprogsep}}l@{\cvskillseparator{\cvskillcprogsep}}l@{}}
-          Debian & Python & C & Arduino\\[\cvskillrowgap]
-          Linux & ROS & C++ & C\#
-        \end{tabular}}
-      \cvsideflowgap
-      \skillgroup{3-D Modeling}{%
-        \begin{tabular}{@{}l@{\cvskillseparator{\cvskillmodelingsep}}l@{}}
-          AutoCAD 2D & Autodesk Invetor\\[\cvskillrowgap]
-          SolidWorks & Cura (Ultimaker)\\[\cvskillrowgap]
-          MeshLab & Eagle - PCB design
-        \end{tabular}}
-
-      \cvsideflowgap
-      \sideheading{LANGUAGES}
-      \langbar{Italiano}{C 2}{45.5}
-      \vspace{\cvlangentryvspace}
-      \langbar{English}{C 1}{38.0}
-      \vspace{\cvlangentryvspace}
-      \langbar{Deutsch}{A 2}{15.0}
-
-      \cvsidebeforepublicationsgap
-      \vspace{\cvpublicationheadingtoptrim}
-      \pubheading{PUBLICATIONS}
-      \vspace{\cvpublicationheadingcontenttrim}
-      \publication{\pubicon}{Kalman Supervised Network for\pubbreak improved Model Predictions.}
-      \publication{\pubicon}{Recurrent and convolutional\pubbreak NN for deep terrain\pubbreak classification by autonomous\pubbreak robots.}
-      \publication{\pubicon}{An RGB-D multi-view\pubbreak perspective for autonomous\pubbreak agricultural robots.}
-      \publication{\pubicon}{On the role of feature and\pubbreak signal selection for terrain\pubbreak learning in planetary\pubbreak exploration.}
-      \publication{\pubicon}{Usability Study of WISE for\pubbreak Movement Assessment and\pubbreak Exercise.}
-      \publication{\pubicon}{Wearable Inertial Sensors for\pubbreak Range of Motion Assessment\pubbreak (WISE).}
+    \begin{minipage}[t][\cvsidebarcontentheight][t]{\cvsidecolumnwidth}
+      \cvsidecontent
     \end{minipage}};
 
   \node[anchor=north west,inner sep=0pt] at (\cvmaincolumnxvalue,38.65) {%

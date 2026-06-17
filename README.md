@@ -32,6 +32,10 @@ to fail fast when text edits accidentally break the planned visual alignment:
   right-column content is measured with zero gaps, the remaining height is
   divided across ordinary, divider-rule, and section-title transitions, and
   the result must fill the frame exactly while staying non-negative.
+- `sidebar_auto_gap_count_pt`, `sidebar_auto_gap_pt`, and
+  `sidebar_auto_gap_balance_delta_pt`: left-column content is measured with
+  zero object gaps, then the remaining sidebar height is distributed equally
+  across the designated sidebar transitions.
 - `mainsection_rule_center_delta_pt`: horizontal rules beside titles such as
   `AWARDS` versus the measured title-box centre.
 - `divider_gap_delta_pt`: symmetry check for the vertical gaps around
@@ -85,9 +89,14 @@ Current high-impact controls in `cv.tex`:
   horizontal rules.  `\mainsection` measures the title and computes both rule
   widths from `\linewidth`, so the rule pair is anchored to the right-column
   text block.
+- `\cvsidecontent`, `\cvpreparesidelayout`, and `\cvsideobjectgap`:
+  left-column content and measured automatic vertical rhythm. The layout first
+  measures the sidebar with zero object gaps, counts designated transitions,
+  and then computes `\cvsideobjectgap` so the content fills the sidebar frame.
 - `\cvskillgroupvspace`, `\cvlangbarvspace`, `\cvsidebeforepublicationsgap`:
   left-column vertical rhythm controls for the digital-skills groups, language
-  bars, and the gap before the publications heading.
+  bars, and the gap before the publications heading; object-level gaps share
+  the computed sidebar rhythm.
 - `\cvsoftskilltriangleheightvalue`, `\cvsoftskilltrianglerule`: soft-skill
   triangle height and stroke thickness.
 - `\pubiconwidth`, `\pubiconboxwidth`, `\pubicongap`, `\publinkiconsize`,
