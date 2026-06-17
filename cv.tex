@@ -9,6 +9,7 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usepackage{eso-pic}
 \usepackage{fontawesome5}
 \usepackage{hyperref}
 \usepackage{enumitem}
@@ -46,7 +47,8 @@
 \newcommand{\cvphotomarginvalue}{3.00}
 \newcommand{\cvsidecolumnwidthvalue}{55.0}
 \newcommand{\cvmaincolumnwidthvalue}{144.58}
-\newcommand{\cvcolumnrulewidthvalue}{0.78}
+\newcommand{\cvsidebarframerulewidthvalue}{0.78}
+\newcommand{\cvcolumnrulewidthvalue}{\cvsidebarframerulewidthvalue}
 \pgfmathsetmacro{\cvsidecolumnxvalue}{\cvphotomarginvalue}
 \pgfmathsetmacro{\cvsidecolumnrightvalue}{\cvsidecolumnxvalue+\cvsidecolumnwidthvalue}
 \pgfmathsetmacro{\cvmaincolumnxvalue}{\cvpagewidthvalue-\cvphotomarginvalue-\cvmaincolumnwidthvalue}
@@ -58,6 +60,7 @@
 \newlength{\cvpaperheight}
 \newlength{\cvpagemargin}
 \newlength{\cvcolumnrulewidth}
+\newlength{\cvsidebarframerulewidth}
 \newlength{\cvsidecolumnleft}
 \newlength{\cvsidecolumnright}
 \newlength{\cvmaincolumnleft}
@@ -67,7 +70,8 @@
 \setlength{\cvpaperwidth}{\cvpagewidthvalue mm}
 \setlength{\cvpaperheight}{\cvpageheightvalue mm}
 \setlength{\cvpagemargin}{\cvphotomarginvalue mm}
-\setlength{\cvcolumnrulewidth}{\cvcolumnrulewidthvalue mm}
+\setlength{\cvsidebarframerulewidth}{\cvsidebarframerulewidthvalue mm}
+\setlength{\cvcolumnrulewidth}{\cvsidebarframerulewidth}
 \setlength{\cvsidecolumnleft}{\cvsidecolumnxvalue mm}
 \setlength{\cvsidecolumnright}{\cvsidecolumnrightvalue mm}
 \setlength{\cvmaincolumnleft}{\cvmaincolumnxvalue mm}
@@ -145,7 +149,9 @@
 \newcommand{\cvsidebodyfontsize}{9.85}
 \newcommand{\cvsidebodybaselineskip}{12.75}
 \newcommand{\cvskillbodybaselineskip}{11.8}
-\newcommand{\cvsoftskilltriangleheightvalue}{10.8}
+\newcommand{\cvsoftskilltriangleheightvalue}{14.2}
+\newcommand{\cvsoftskilltriangletopvalue}{1.50}
+\newcommand{\cvsoftskilltrianglebasevalue}{10.75}
 \newcommand{\cvsoftskilltrianglerule}{0.42pt}
 % Fixed visual trims compensate the top line boxes of the following content
 % objects.  The measured spacing itself remains \cvsideobjectgap; these trims
@@ -208,6 +214,7 @@
 \newcommand{\pubboxvisualtoptrim}{0.04mm}
 \newcommand{\pubboxvisualbottomtrim}{0.12mm}
 \newlength{\sectiontitlegap}
+\newlength{\mainsectionrulethickness}
 \newlength{\sectionrulewidth}
 \newlength{\sectionruleraise}
 \newsavebox{\sectiontitlebox}
@@ -219,6 +226,7 @@
 \newlength{\pubheadingheight}
 \newlength{\orcidraise}
 \setlength{\sectiontitlegap}{1.85mm}
+\setlength{\mainsectionrulethickness}{0.65pt}
 \newlength{\pubiconcenterx}
 \setlength{\pubiconcenterx}{\dimexpr\pubiconwidth/2\relax}
 
@@ -228,10 +236,35 @@
 \newcommand{\wide}[1]{{\sans\bfseries\textls[180]{#1}}}
 \newcommand{\cvlink}[2]{\href{#1}{\textcolor{cvteal}{\underline{#2}}}}
 \newcommand{\headerlink}[2]{\href{#1}{\textcolor{white}{\underline{#2}}}}
+\newcommand{\cvheaderheightvalue}{36.10}
+\newcommand{\cvheadernameyvalue}{4.41}
+\newcommand{\cvheadernamefontsize}{27.4}
+\newcommand{\cvheadernamebaselineskip}{29.2}
+\newcommand{\cvheadersubtitleyvalue}{16.41}
+\newcommand{\cvheadersubtitlefontsize}{12.02}
+\newcommand{\cvheadersubtitlebaselineskip}{13.0}
+\newcommand{\cvheadercontactbottomgapvalue}{4.55}
+\newcommand{\cvheadercontactrowgapvalue}{5.70}
+\newcommand{\cvheaderitemfontsize}{8.0}
+\newcommand{\cvheaderitembaselineskip}{9.2}
+\newcommand{\cvheaderitemicongap}{1.05mm}
+\pgfmathsetmacro{\cvheadertextcenterxvalue}{\cvmaincolumncenterxvalue+0.45}
+\pgfmathsetmacro{\cvheadercontactleftxvalue}{\cvmaincolumnxvalue+0.88}
+\pgfmathsetmacro{\cvheadercontactcenterxvalue}{\cvmaincolumncenterxvalue+2.20}
+\pgfmathsetmacro{\cvheadercontactrightxvalue}{\cvmaincolumnrightvalue-0.80}
+\pgfmathsetmacro{\cvheadercontactrowtwoyvalue}{\cvheaderheightvalue-\cvheadercontactbottomgapvalue}
+\pgfmathsetmacro{\cvheadercontactrowoneyvalue}{\cvheadercontactrowtwoyvalue-\cvheadercontactrowgapvalue}
+\newcommand{\cvheadernamefont}{\sans\bfseries\fontsize{\cvheadernamefontsize}{\cvheadernamebaselineskip}\selectfont}
+\newcommand{\cvheadersubtitlefont}{\sans\fontseries{semibold}\fontsize{\cvheadersubtitlefontsize}{\cvheadersubtitlebaselineskip}\selectfont}
 
 \newcommand{\headeritem}[3]{%
-  {\color{white}\fontsize{9.3}{10.5}\selectfont
-  \faIcon{#1}\hspace{1.2mm}#3}%
+  {\sans\fontseries{regular}\fontsize{\cvheaderitemfontsize}{\cvheaderitembaselineskip}\selectfont
+  \textcolor{white}{\faIcon{#1}}\hspace{\cvheaderitemicongap}%
+  \if\relax\detokenize{#2}\relax
+    \textcolor{white}{#3}%
+  \else
+    \headerlink{#2}{#3}%
+  \fi}%
 }
 
 \makeatletter
@@ -387,15 +420,15 @@
   \begin{tikzpicture}[x=1mm,y=-1mm,baseline=(softbaseline)]
     \path[use as bounding box] (0,0) rectangle (\cvsidecolumnwidthvalue,\cvsoftskilltriangleheightvalue);
     \coordinate (softbaseline) at (0,\cvsoftskilltriangleheightvalue);
-    \coordinate (softtop) at ({0.5*\cvsidecolumnwidthvalue},1.50);
-    \coordinate (softleft) at (16.25,8.20);
-    \coordinate (softright) at ({\cvsidecolumnwidthvalue-16.25},8.20);
+    \coordinate (softtop) at ({0.5*\cvsidecolumnwidthvalue},\cvsoftskilltriangletopvalue);
+    \coordinate (softleft) at (16.25,\cvsoftskilltrianglebasevalue);
+    \coordinate (softright) at ({\cvsidecolumnwidthvalue-16.25},\cvsoftskilltrianglebasevalue);
     \draw[cvteal,line width=\cvsoftskilltrianglerule,line join=round]
       (softtop) -- (softright) -- (softleft) -- cycle;
     \fill[cvteal] (softtop) circle (0.42) (softleft) circle (0.42) (softright) circle (0.42);
     \node[anchor=center,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (softtop) {Pragmatic};
-    \node[anchor=west,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (0,8.20) {Team working};
-    \node[anchor=east,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (\cvsidecolumnwidthvalue,8.20) {Result Oriented};
+    \node[anchor=west,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (0,\cvsoftskilltrianglebasevalue) {Team working};
+    \node[anchor=east,fill=cvbg,inner xsep=0.80mm,inner ysep=0.28mm] at (\cvsidecolumnwidthvalue,\cvsoftskilltrianglebasevalue) {Result Oriented};
   \end{tikzpicture}\par
 }
 
@@ -466,12 +499,12 @@
   \sbox{\sectiontitlebox}{\color{cvteal}\wide{\fontsize{17.2}{18}\selectfont #1}}%
   \setlength{\sectionrulewidth}{\dimexpr\linewidth-\wd\sectiontitlebox-2\sectiontitlegap\relax}%
   \setlength{\sectionrulewidth}{0.5\sectionrulewidth}%
-  \setlength{\sectionruleraise}{\dimexpr\ht\sectiontitlebox/2-\dp\sectiontitlebox/2-0.325pt\relax}%
-  \cvmetricdim{mainsection_rule_center_delta_pt}{\sectionruleraise+0.325pt-\ht\sectiontitlebox/2+\dp\sectiontitlebox/2}%
+  \setlength{\sectionruleraise}{\dimexpr\ht\sectiontitlebox/2-\dp\sectiontitlebox/2-\mainsectionrulethickness/2\relax}%
+  \cvmetricdim{mainsection_rule_center_delta_pt}{\sectionruleraise+\mainsectionrulethickness/2-\ht\sectiontitlebox/2+\dp\sectiontitlebox/2}%
   \noindent\makebox[\linewidth][l]{%
-    \raisebox{\sectionruleraise}{\textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}}%
+    \raisebox{\sectionruleraise}{\textcolor{cvteal}{\rule{\sectionrulewidth}{\mainsectionrulethickness}}}%
     \hspace{\sectiontitlegap}\usebox{\sectiontitlebox}%
-    \hspace{\sectiontitlegap}\raisebox{\sectionruleraise}{\textcolor{cvteal}{\rule{\sectionrulewidth}{0.65pt}}}%
+    \hspace{\sectiontitlegap}\raisebox{\sectionruleraise}{\textcolor{cvteal}{\rule{\sectionrulewidth}{\mainsectionrulethickness}}}%
   }\par\cvmainsectiongap
 }
 
@@ -622,7 +655,7 @@
   \fill[cvteal] (0,0) rectangle (210,36.1);
   \fill[cvbg] (0,36.1) rectangle (210,297);
 
-  \draw[cvteal,line width=\cvcolumnrulewidth,rounded corners=\cvsidebarframeradius]
+  \draw[cvteal,line width=\cvsidebarframerulewidth,rounded corners=\cvsidebarframeradius]
     (\cvsidebarframeleftvalue,\cvsidebarframetopvalue) rectangle (\cvsidebarframerightvalue,\cvsidebarframebottomvalue);
   \fill[cvbg]
     (\cvsidebarframecutleftvalue,\cvsidebarframetopvalue-\cvsidebarframecutrisevalue)
@@ -635,16 +668,6 @@
     \node[anchor=north west,inner sep=0pt] at (-3.10,0.80) {\includegraphics[width=67.53mm]{CV_picture_canva.png}};
   \end{scope}
 
-  \node[anchor=north,text=white,font=\sans\bfseries\fontsize{30.2}{32.3}\selectfont] at (\cvmaincolumncenterxvalue,3.35) {Fabio Vulpi};
-  \node[anchor=north,text=white,font=\sans\bfseries\fontsize{14.4}{15.3}\selectfont] at (\cvmaincolumncenterxvalue,13.95) {Ph.D. in Mechanical Engineering and Management};
-
-  \node[anchor=west] at (\cvmaincolumnxvalue,25.25) {\headeritem{phone}{tel:+393803485030}{+39 3803485030}};
-  \node[anchor=west] at (\cvmaincolumnxvalue,25.25) {\makebox[\cvmaincolumnwidth][c]{\headeritem{map-marker-alt}{}{70124, Bari (BA), Italy}}};
-  \node[anchor=east] at (\cvmaincolumnrightvalue,25.25) {\headeritem{calendar-alt}{}{21/12/1995}};
-  \node[anchor=west] at (\cvmaincolumnxvalue,31.55) {\headeritem{linkedin}{https://linkedin.com/in/fabio-vulpi}{\headerlink{https://linkedin.com/in/fabio-vulpi}{linkedin.com/in/fabio-vulpi}}};
-  \node[anchor=west] at (\cvmaincolumnxvalue,31.55) {\makebox[\cvmaincolumnwidth][c]{\headeritem{github}{https://github.com/vulpi-f}{\headerlink{https://github.com/vulpi-f}{github.com/vulpi-f}}}};
-  \node[anchor=east] at (\cvmaincolumnrightvalue,31.55) {\headeritem{envelope}{mailto:vulpi.fabio@gmail.com}{vulpi.fabio@gmail.com}};
-
   \node[anchor=north west,inner sep=0pt] at (\cvsidecolumnxvalue,\cvsidebarcontenttopvalue) {%
     \begin{minipage}[t][\cvsidebarcontentheight][t]{\cvsidecolumnwidth}
       \cvsidecontent
@@ -656,4 +679,25 @@
     \end{minipage}};
 \end{scope}
 \end{tikzpicture}
+\AddToShipoutPictureFG*{%
+  \AtPageUpperLeft{%
+    \put(\LenToUnit{\cvheadertextcenterxvalue mm},\LenToUnit{-\cvheadernameyvalue mm})
+      {\makebox(0,0)[t]{\textcolor{white}{\cvheadernamefont Fabio Vulpi}}}%
+    \put(\LenToUnit{\cvheadertextcenterxvalue mm},\LenToUnit{-\cvheadersubtitleyvalue mm})
+      {\makebox(0,0)[t]{\textcolor{white}{\cvheadersubtitlefont Ph.D. in Mechanical Engineering and Management}}}%
+
+    \put(\LenToUnit{\cvheadercontactleftxvalue mm},\LenToUnit{-\cvheadercontactrowoneyvalue mm})
+      {\makebox(0,0)[l]{\headeritem{phone}{}{+39 3803485030}}}%
+    \put(\LenToUnit{\cvheadercontactcenterxvalue mm},\LenToUnit{-\cvheadercontactrowoneyvalue mm})
+      {\makebox(0,0){\headeritem{map-marker-alt}{}{70124, Bari (BA), Italy}}}%
+    \put(\LenToUnit{\cvheadercontactrightxvalue mm},\LenToUnit{-\cvheadercontactrowoneyvalue mm})
+      {\makebox(0,0)[r]{\headeritem{calendar-alt}{}{21/12/1995}}}%
+    \put(\LenToUnit{\cvheadercontactleftxvalue mm},\LenToUnit{-\cvheadercontactrowtwoyvalue mm})
+      {\makebox(0,0)[l]{\headeritem{linkedin}{https://linkedin.com/in/fabio-vulpi}{linkedin.com/in/fabio-vulpi}}}%
+    \put(\LenToUnit{\cvheadercontactcenterxvalue mm},\LenToUnit{-\cvheadercontactrowtwoyvalue mm})
+      {\makebox(0,0){\headeritem{github}{https://github.com/vulpi-f}{github.com/vulpi-f}}}%
+    \put(\LenToUnit{\cvheadercontactrightxvalue mm},\LenToUnit{-\cvheadercontactrowtwoyvalue mm})
+      {\makebox(0,0)[r]{\headeritem{envelope}{}{vulpi.fabio@gmail.com}}}%
+  }%
+}
 \end{document}

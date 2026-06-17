@@ -69,8 +69,10 @@ Current high-impact controls in `cv.tex`:
   right edge of the main column, the main-column header anchors, and the derived
   gutters around the sidebar frame rule.
 - `\cvsidecolumnwidthvalue`, `\cvmaincolumnwidthvalue`,
-  `\cvcolumnrulewidthvalue`: column widths and frame-rule thickness. The rule
-  x coordinate and both gutters are derived from these plus `\cvphotomarginvalue`.
+  `\cvsidebarframerulewidthvalue`: column widths and sidebar-frame thickness.
+  The frame-rule x coordinate and both gutters are derived from these plus
+  `\cvphotomarginvalue`. `\cvcolumnrulewidthvalue` remains as a compatibility
+  alias for the sidebar-frame rule.
 - `\cvmaincontent` and `\cvpreparemainlayout`: right-column content and its
   automatic vertical rhythm. The layout measures the natural content height,
   counts ordinary title/location/description transitions through `\cvmaingap`,
@@ -91,10 +93,17 @@ Current high-impact controls in `cv.tex`:
   `\cvsidebarframecutrisevalue`, and `\cvsidebarframecutdropvalue`: triangular
   sidebar-frame cutout that aligns the top border with the extended upper rear
   edge of the first chevron.
-- `\sectiontitlegap`: gap between the main-column section titles and the
-  horizontal rules.  `\mainsection` measures the title and computes both rule
-  widths from `\linewidth`, so the rule pair is anchored to the right-column
-  text block.
+- `\sectiontitlegap`, `\mainsectionrulethickness`: gap between the main-column
+  section titles and the horizontal rules, plus the rule thickness itself.
+  `\mainsection` measures the title and computes both rule widths from
+  `\linewidth`, so the rule pair is anchored to the right-column text block and
+  vertically centered after thickness changes.
+- `\cvheader...`: header typography, anchors, and vertical rhythm calibrated
+  against the reference PDF. The name uses Montserrat Bold 27.4 pt, the
+  subtitle Montserrat SemiBold 12.02 pt, and contacts Montserrat Regular 8 pt.
+  Header content is emitted in page coordinates rather than inside the
+  inverted TikZ canvas, so the LinkedIn and GitHub annotations stay attached
+  only to their respective text.
 - `\cvsidecontent`, `\cvpreparesidelayout`, and `\cvsideobjectgap`:
   left-column content and measured automatic vertical rhythm. The layout first
   measures the sidebar with zero object gaps, counts designated transitions,
@@ -103,8 +112,11 @@ Current high-impact controls in `cv.tex`:
   left-column vertical rhythm controls for the digital-skills groups, language
   bars, and the gap before the publications heading; object-level gaps share
   the computed sidebar rhythm.
-- `\cvsoftskilltriangleheightvalue`, `\cvsoftskilltrianglerule`: soft-skill
-  triangle height and stroke thickness.
+- `\cvsoftskilltriangleheightvalue`, `\cvsoftskilltriangletopvalue`,
+  `\cvsoftskilltrianglebasevalue`, `\cvsoftskilltrianglerule`: soft-skill
+  triangle height, vertex placement, and stroke thickness. Increasing the
+  triangle height reduces the automatically distributed sidebar gaps and pulls
+  the first sidebar heading slightly upward.
 - `\pubiconwidth`, `\pubiconboxwidth`, `\pubicongap`, `\publinkiconsize`,
   `\pubicontrimleft`, `\pubicontrimbottom`, `\pubicontrimright`,
   `\pubicontrimtop`, `\pubboxvisualtoptrim`, `\pubboxvisualbottomtrim`,
