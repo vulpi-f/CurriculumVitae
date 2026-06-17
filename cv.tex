@@ -116,6 +116,8 @@
 \newcommand{\cvsidebodyfontsize}{9.85}
 \newcommand{\cvsidebodybaselineskip}{12.75}
 \newcommand{\cvskillbodybaselineskip}{11.8}
+\newcommand{\cvsoftskilllabelwidth}{1.25mm}
+\newcommand{\cvsoftskilllabelsep}{2.15mm}
 \newcommand{\cvsoftskillitemsep}{0.28mm}
 \newcommand{\cvsoftskilltopsep}{0pt}
 % Fixed visual trims compensate the top line boxes of the following content
@@ -156,12 +158,11 @@
 \newcommand{\pubicontrimright}{0bp}
 \newcommand{\pubicontrimtop}{0bp}
 \newcommand{\orcidboxwidth}{5.45mm}
-\newcommand{\orcidartwidth}{5.18mm}
+\newcommand{\orcidartsize}{5.18mm}
 \newcommand{\orcidtrimleft}{0bp}
 \newcommand{\orcidtrimbottom}{0bp}
 \newcommand{\orcidtrimright}{0bp}
 \newcommand{\orcidtrimtop}{0bp}
-\newcommand{\orcidbaseline}{-0.82mm}
 \newcommand{\pubtextwidth}{\dimexpr\cvsidecolumnwidth-\pubiconboxwidth-\pubicongap\relax}
 \newcommand{\publineheight}{13.85}
 \newcommand{\pubentrygap}{\cvsidepubentrygap}
@@ -173,7 +174,10 @@
 \newsavebox{\sectiontitlebox}
 \newsavebox{\sideheadingtextbox}
 \newsavebox{\sidearrowtextbox}
+\newsavebox{\pubheadingtextbox}
 \newlength{\sideheadingheight}
+\newlength{\pubheadingheight}
+\newlength{\orcidraise}
 \setlength{\sectiontitlegap}{1.85mm}
 \newlength{\pubiconcenterx}
 \setlength{\pubiconcenterx}{\dimexpr\pubiconwidth/2\relax}
@@ -299,19 +303,22 @@
 
 \newcommand{\orcidicon}{%
   \makebox[\orcidboxwidth][c]{%
-    \raisebox{\orcidbaseline}{%
+    \raisebox{\orcidraise}{%
       \includegraphics[
-        width=\orcidartwidth,
+        height=\orcidartsize,
         trim=\orcidtrimleft{} \orcidtrimbottom{} \orcidtrimright{} \orcidtrimtop{},
         clip
       ]{CV_orcid_icon.png}}}%
 }
 
 \newcommand{\pubheading}[1]{%
+  \sbox{\pubheadingtextbox}{\sans\bfseries\fontsize{15.3}{16.1}\selectfont #1}%
+  \setlength{\pubheadingheight}{\dimexpr\ht\pubheadingtextbox+\dp\pubheadingtextbox\relax}%
+  \setlength{\orcidraise}{\dimexpr-\dp\pubheadingtextbox+(\pubheadingheight-\orcidartsize)/2\relax}%
   \nointerlineskip
   \noindent
   \orcidicon%
-  \hspace{\sideheadinggap}{\sans\bfseries\fontsize{15.3}{16.1}\selectfont #1}\par
+  \hspace{\sideheadinggap}\usebox{\pubheadingtextbox}\par
   \vspace{\cvsideheadingcontentgap}%
 }
 
@@ -471,7 +478,7 @@
       \sideheading{SOFT-SKILLS}
       \vspace{\cvsoftskillheadingcontenttrim}
       {\fontsize{9.9}{11.1}\selectfont
-      \begin{itemize}[leftmargin=5.2mm,itemsep=\cvsoftskillitemsep,topsep=\cvsoftskilltopsep,parsep=0pt]
+      \begin{itemize}[labelindent=0pt,labelwidth=\cvsoftskilllabelwidth,labelsep=\cvsoftskilllabelsep,leftmargin=!,align=left,itemsep=\cvsoftskillitemsep,topsep=\cvsoftskilltopsep,parsep=0pt]
         \item Pragmatic
         \item Team working
         \item Result Oriented
