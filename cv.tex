@@ -34,11 +34,46 @@
 % - The design intentionally uses absolute TikZ coordinates to mirror the
 %   Canva/reference PDF.  When retouching, prefer changing only the named
 %   constants below before moving content coordinates.
-% - Vertical distribution is driven by column-specific elastic object gaps.
-%   The main column and sidebar intentionally have separate controls, because
-%   their content density changes independently.
-% - Publication link badges compute their height from the text box. The link
-%   artwork is centered in a square inner box whose center is the badge center.
+% - The main-column rhythm uses \cvmainvisualgap as the single base spacing:
+%   every title/location/description/divider transition gets that value plus
+%   one equal stretch unit, so changing the parameter preserves the visual
+%   distribution instead of retuning individual entry gaps.
+% - Publication link badges compute their height from the text box plus visual
+%   trim offsets. The link artwork is centered in a square inner box whose
+%   center is the badge center.
+\newcommand{\cvpagewidthvalue}{210.079}
+\newcommand{\cvpageheightvalue}{297.127}
+\newcommand{\cvphotomarginvalue}{3.00}
+\newcommand{\cvsidecolumnwidthvalue}{55.0}
+\newcommand{\cvmaincolumnwidthvalue}{144.58}
+\newcommand{\cvcolumnrulewidthvalue}{0.68}
+\pgfmathsetmacro{\cvsidecolumnxvalue}{\cvphotomarginvalue}
+\pgfmathsetmacro{\cvsidecolumnrightvalue}{\cvsidecolumnxvalue+\cvsidecolumnwidthvalue}
+\pgfmathsetmacro{\cvmaincolumnxvalue}{\cvpagewidthvalue-\cvphotomarginvalue-\cvmaincolumnwidthvalue}
+\pgfmathsetmacro{\cvmaincolumnrightvalue}{\cvpagewidthvalue-\cvphotomarginvalue}
+\pgfmathsetmacro{\cvmaincolumncenterxvalue}{\cvmaincolumnxvalue+0.5*\cvmaincolumnwidthvalue}
+\pgfmathsetmacro{\cvcolumnrulexvalue}{0.5*(\cvsidecolumnrightvalue+\cvmaincolumnxvalue)}
+\pgfmathsetmacro{\cvcolumnguttervalue}{0.5*(\cvmaincolumnxvalue-\cvsidecolumnrightvalue-\cvcolumnrulewidthvalue)}
+\newlength{\cvpaperwidth}
+\newlength{\cvpaperheight}
+\newlength{\cvpagemargin}
+\newlength{\cvcolumnrulewidth}
+\newlength{\cvsidecolumnleft}
+\newlength{\cvsidecolumnright}
+\newlength{\cvmaincolumnleft}
+\newlength{\cvmaincolumnright}
+\newlength{\cvcolumnrulecenter}
+\newlength{\cvcolumngutter}
+\setlength{\cvpaperwidth}{\cvpagewidthvalue mm}
+\setlength{\cvpaperheight}{\cvpageheightvalue mm}
+\setlength{\cvpagemargin}{\cvphotomarginvalue mm}
+\setlength{\cvcolumnrulewidth}{\cvcolumnrulewidthvalue mm}
+\setlength{\cvsidecolumnleft}{\cvsidecolumnxvalue mm}
+\setlength{\cvsidecolumnright}{\cvsidecolumnrightvalue mm}
+\setlength{\cvmaincolumnleft}{\cvmaincolumnxvalue mm}
+\setlength{\cvmaincolumnright}{\cvmaincolumnrightvalue mm}
+\setlength{\cvcolumnrulecenter}{\cvcolumnrulexvalue mm}
+\setlength{\cvcolumngutter}{\cvcolumnguttervalue mm}
 \newlength{\cvcontentbottom}
 \newlength{\cvsidebarframetop}
 \newlength{\cvsideframetopinset}
@@ -56,7 +91,9 @@
 \setlength{\cvmaincontenttop}{38.65mm}
 \setlength{\cvsidebarcontentheight}{\dimexpr\cvcontentbottom-\cvsidebarcontenttop\relax}
 \setlength{\cvmaincontentheight}{\dimexpr\cvcontentbottom-\cvmaincontenttop\relax}
-\newcommand{\cvmainobjectgap}{0pt plus 1fill}
+\newcommand{\cvmainvisualgap}{0.60mm}
+\newcommand{\cvmainstretchunit}{1fill}
+\newcommand{\cvmainobjectgap}{\cvmainvisualgap plus \cvmainstretchunit}
 \newcommand{\cvsideobjectgap}{0pt plus 1fill}
 \newcommand{\cvmainflowgap}{\par\vspace{\cvmainobjectgap}}
 \newcommand{\cvsideflowgap}{\par\vspace{\cvsideobjectgap}}
@@ -91,12 +128,12 @@
 \newcommand{\cvlangbarvspace}{\cvskillrowgap}
 \newcommand{\cvlangentryvspace}{\cvskillrowgap}
 \newcommand{\cvsidepubentrygap}{\cvsideobjectgap}
-\newcommand{\cvsidecolumnwidth}{55.0mm}
+\newcommand{\cvsidecolumnwidth}{\cvsidecolumnwidthvalue mm}
 \newcommand{\cvskillseparator}[1]{\hspace{#1}\vrule\hspace{#1}}
 \newcommand{\cvskillphysicssep}{5.68mm}
 \newcommand{\cvskillcprogsep}{3.00mm}
 \newcommand{\cvskillmodelingsep}{5.45mm}
-\newcommand{\cvmaincolumnwidth}{144.58mm}
+\newcommand{\cvmaincolumnwidth}{\cvmaincolumnwidthvalue mm}
 \newcommand{\sidearrowboxwidth}{5.45mm}
 \newcommand{\sidearrowxshift}{-0.35mm}
 \newcommand{\sidearrowtrimleft}{59.37bp}
@@ -107,7 +144,8 @@
 \newcommand{\pubiconwidth}{5.25mm}
 \newcommand{\pubiconboxwidth}{5.95mm}
 \newcommand{\pubicongap}{1.28mm}
-\newcommand{\pubiconartwidth}{\pubiconwidth}
+\newcommand{\publinkiconsize}{4.86mm}
+\newcommand{\pubiconartwidth}{\publinkiconsize}
 \newcommand{\pubiconartxshift}{0pt}
 \newcommand{\pubiconartyshift}{0pt}
 \newcommand{\pubicontrimleft}{0bp}
@@ -124,8 +162,10 @@
 \newcommand{\pubtextwidth}{\dimexpr\cvsidecolumnwidth-\pubiconboxwidth-\pubicongap\relax}
 \newcommand{\publineheight}{13.85}
 \newcommand{\pubentrygap}{\cvsidepubentrygap}
-\newcommand{\dividergap}{1.22mm}
-\newcommand{\entrylinegap}{0.60mm}
+\newcommand{\pubboxvisualtoptrim}{0.04mm}
+\newcommand{\pubboxvisualbottomtrim}{0.12mm}
+\newcommand{\dividergap}{\cvmainobjectgap}
+\newcommand{\entrylinegap}{\cvmainobjectgap}
 \newlength{\sectiontitlegap}
 \newlength{\sectionrulewidth}
 \newlength{\sectionruleraise}
@@ -161,6 +201,11 @@
   \cvmetricdim{main_content_bottom_delta_pt}{\cvmaincontenttop+\cvmaincontentheight-\cvcontentbottom}%
   \cvmetricdim{sidebar_top_inset_pt}{\cvsidebarcontenttop-\cvsidebarframetop}%
   \cvmetricdim{sidebar_top_inset_delta_pt}{\cvsidebarcontenttop-\cvsidebarframetop-\cvsideframetopinset}%
+  \cvmetricdim{page_margin_left_delta_pt}{\cvsidecolumnleft-\cvpagemargin}%
+  \cvmetricdim{page_margin_right_delta_pt}{\cvpaperwidth-\cvmaincolumnright-\cvpagemargin}%
+  \cvmetricdim{page_margin_symmetry_delta_pt}{\cvsidecolumnleft-\cvpaperwidth+\cvmaincolumnright}%
+  \cvmetricdim{column_gutter_left_delta_pt}{\cvcolumnrulecenter-\cvcolumnrulewidth/2-\cvsidecolumnright-\cvcolumngutter}%
+  \cvmetricdim{column_gutter_right_delta_pt}{\cvmaincolumnleft-\cvcolumnrulecenter-\cvcolumnrulewidth/2-\cvcolumngutter}%
 }
 
 \newcommand{\sideheading}[1]{%
@@ -241,13 +286,14 @@
 \newcommand{\publication}[2]{%
   \sbox{\pubtextbox}{%
     \begin{minipage}[t]{\pubtextwidth}\vspace{0pt}\raggedright\fontsize{10.15}{\publineheight}\selectfont #2\end{minipage}}%
-  \setlength{\pubboxheight}{\dimexpr\ht\pubtextbox+\dp\pubtextbox\relax}%
+  \setlength{\pubboxheight}{\dimexpr\ht\pubtextbox+\dp\pubtextbox-\pubboxvisualtoptrim-\pubboxvisualbottomtrim\relax}%
   \sbox{\pubiconbox}{#1{\pubboxheight}}%
-  \setlength{\pubiconraise}{\dimexpr\ht\pubtextbox-\ht\pubiconbox\relax}%
-  \cvmetricdim{publication_height_delta_pt}{\pubboxheight-\ht\pubtextbox-\dp\pubtextbox}%
+  \setlength{\pubiconraise}{\dimexpr\ht\pubtextbox-\pubboxvisualtoptrim-\ht\pubiconbox\relax}%
+  \cvmetricdim{publication_height_delta_pt}{\pubboxheight-\ht\pubtextbox-\dp\pubtextbox+\pubboxvisualtoptrim+\pubboxvisualbottomtrim}%
   \cvmetricdim{publication_icon_center_delta_pt}{\pubiconcenterx-\pubiconwidth/2}%
-  \cvmetricdim{publication_top_delta_pt}{\pubiconraise+\ht\pubiconbox-\ht\pubtextbox}%
-  \cvmetricdim{publication_bottom_delta_pt}{\pubiconraise-\dp\pubiconbox+\dp\pubtextbox}%
+  \cvmetricdim{publication_icon_art_size_delta_pt}{\pubiconartwidth-\publinkiconsize}%
+  \cvmetricdim{publication_top_delta_pt}{\pubiconraise+\ht\pubiconbox-\ht\pubtextbox+\pubboxvisualtoptrim}%
+  \cvmetricdim{publication_bottom_delta_pt}{\pubiconraise-\dp\pubiconbox+\dp\pubtextbox-\pubboxvisualbottomtrim}%
   \noindent
   \raisebox{\pubiconraise}{\makebox[\pubiconboxwidth][l]{\usebox{\pubiconbox}}}%
   \hspace{\pubicongap}%
@@ -282,8 +328,8 @@
 }
 
 \newcommand{\divider}{%
-  \cvmetricdim{divider_gap_delta_pt}{\dividergap-\dividergap}%
-  \cvmainflowgap\nointerlineskip\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\cvmainflowgap
+  \cvmetricdim{divider_gap_delta_pt}{\cvmainvisualgap-\cvmainvisualgap}%
+  \par\vspace{\dividergap}\nointerlineskip\noindent\textcolor{cvteal}{\rule{\linewidth}{0.42pt}}\par\vspace{\dividergap}
 }
 
 \newcommand{\cvitems}{%
@@ -308,25 +354,25 @@
   \fill[cvteal] (0,0) rectangle (210,36.1);
   \fill[cvbg] (0,36.1) rectangle (210,297);
 
-  \draw[cvteal,line width=0.68mm,rounded corners=5.3mm]
-    (-9.32,39.02) rectangle (60.21,293.64);
+  \draw[cvteal,line width=\cvcolumnrulewidth,rounded corners=5.3mm]
+    (-9.32,39.02) rectangle (\cvcolumnrulexvalue,293.64);
 
   \begin{scope}
-    \clip[rounded corners=4.5mm] (3.00,3.00) rectangle (60.33,33.01);
+    \clip[rounded corners=4.5mm] (\cvphotomarginvalue,\cvphotomarginvalue) rectangle (60.33,33.01);
     \node[anchor=north west,inner sep=0pt] at (-3.10,0.80) {\includegraphics[width=67.53mm]{CV_picture_canva.png}};
   \end{scope}
 
-  \node[anchor=north,text=white,font=\sans\bfseries\fontsize{30.2}{32.3}\selectfont] at (135,3.35) {Fabio Vulpi};
-  \node[anchor=north,text=white,font=\sans\bfseries\fontsize{14.4}{15.3}\selectfont] at (135,13.95) {Ph.D. in Mechanical Engineering and Management};
+  \node[anchor=north,text=white,font=\sans\bfseries\fontsize{30.2}{32.3}\selectfont] at (\cvmaincolumncenterxvalue,3.35) {Fabio Vulpi};
+  \node[anchor=north,text=white,font=\sans\bfseries\fontsize{14.4}{15.3}\selectfont] at (\cvmaincolumncenterxvalue,13.95) {Ph.D. in Mechanical Engineering and Management};
 
-  \node[anchor=west] at (62.77,25.25) {\headeritem{phone}{tel:+393803485030}{+39 3803485030}};
-  \node[anchor=west] at (62.77,25.25) {\makebox[144.58mm][c]{\headeritem{map-marker-alt}{}{70124, Bari (BA), Italy}}};
-  \node[anchor=east] at (207.35,25.25) {\headeritem{calendar-alt}{}{21/12/1995}};
-  \node[anchor=west] at (62.77,31.55) {\headeritem{linkedin}{https://linkedin.com/in/fabio-vulpi}{\headerlink{https://linkedin.com/in/fabio-vulpi}{linkedin.com/in/fabio-vulpi}}};
-  \node[anchor=west] at (62.77,31.55) {\makebox[144.58mm][c]{\headeritem{github}{https://github.com/vulpi-f}{\headerlink{https://github.com/vulpi-f}{github.com/vulpi-f}}}};
-  \node[anchor=east] at (207.35,31.55) {\headeritem{envelope}{mailto:vulpi.fabio@gmail.com}{vulpi.fabio@gmail.com}};
+  \node[anchor=west] at (\cvmaincolumnxvalue,25.25) {\headeritem{phone}{tel:+393803485030}{+39 3803485030}};
+  \node[anchor=west] at (\cvmaincolumnxvalue,25.25) {\makebox[\cvmaincolumnwidth][c]{\headeritem{map-marker-alt}{}{70124, Bari (BA), Italy}}};
+  \node[anchor=east] at (\cvmaincolumnrightvalue,25.25) {\headeritem{calendar-alt}{}{21/12/1995}};
+  \node[anchor=west] at (\cvmaincolumnxvalue,31.55) {\headeritem{linkedin}{https://linkedin.com/in/fabio-vulpi}{\headerlink{https://linkedin.com/in/fabio-vulpi}{linkedin.com/in/fabio-vulpi}}};
+  \node[anchor=west] at (\cvmaincolumnxvalue,31.55) {\makebox[\cvmaincolumnwidth][c]{\headeritem{github}{https://github.com/vulpi-f}{\headerlink{https://github.com/vulpi-f}{github.com/vulpi-f}}}};
+  \node[anchor=east] at (\cvmaincolumnrightvalue,31.55) {\headeritem{envelope}{mailto:vulpi.fabio@gmail.com}{vulpi.fabio@gmail.com}};
 
-  \node[anchor=north west,inner sep=0pt] at (2.65,\cvsidebarcontenttopvalue) {%
+  \node[anchor=north west,inner sep=0pt] at (\cvsidecolumnxvalue,\cvsidebarcontenttopvalue) {%
     \begin{minipage}[t][\cvsidebarcontentheight][s]{\cvsidecolumnwidth}
       \cvsidestartflowgap
       \sideheading{ABOUT ME}
@@ -389,7 +435,7 @@
       \publication{\pubicon}{Wearable Inertial Sensors for\pubbreak Range of Motion Assessment\pubbreak (WISE).}
     \end{minipage}};
 
-  \node[anchor=north west,inner sep=0pt] at (62.77,38.65) {%
+  \node[anchor=north west,inner sep=0pt] at (\cvmaincolumnxvalue,38.65) {%
     \begin{minipage}[t][\cvmaincontentheight][s]{\cvmaincolumnwidth}
       \mainsection{WORK EXPERIENCE}
       \entry{Experienced Consultant}{10/2024 - current}

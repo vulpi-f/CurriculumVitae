@@ -15,9 +15,15 @@ LIMITS = {
     "sidebar_content_bottom_delta_pt": 0.10,
     "main_content_bottom_delta_pt": 0.10,
     "sidebar_top_inset_delta_pt": 0.05,
+    "page_margin_left_delta_pt": 0.05,
+    "page_margin_right_delta_pt": 0.05,
+    "page_margin_symmetry_delta_pt": 0.05,
+    "column_gutter_left_delta_pt": 0.05,
+    "column_gutter_right_delta_pt": 0.05,
     "sideheading_arrow_height_delta_pt": 0.05,
     "publication_height_delta_pt": 0.25,
     "publication_icon_center_delta_pt": 0.10,
+    "publication_icon_art_size_delta_pt": 0.05,
     "publication_top_delta_pt": 0.10,
     "publication_bottom_delta_pt": 0.10,
     "mainsection_rule_center_delta_pt": 0.15,
@@ -66,6 +72,31 @@ def main() -> int:
         abs(require(metrics, "sidebar_top_inset_delta_pt")[0]),
         LIMITS["sidebar_top_inset_delta_pt"],
     ))
+    checks.append((
+        "outer margin: left column starts at the photo-derived page margin",
+        abs(require(metrics, "page_margin_left_delta_pt")[0]),
+        LIMITS["page_margin_left_delta_pt"],
+    ))
+    checks.append((
+        "outer margin: right column ends at the photo-derived page margin",
+        abs(require(metrics, "page_margin_right_delta_pt")[0]),
+        LIMITS["page_margin_right_delta_pt"],
+    ))
+    checks.append((
+        "outer margins: left and right are symmetric",
+        abs(require(metrics, "page_margin_symmetry_delta_pt")[0]),
+        LIMITS["page_margin_symmetry_delta_pt"],
+    ))
+    checks.append((
+        "column gutter: left-column text to frame rule matches derived gutter",
+        abs(require(metrics, "column_gutter_left_delta_pt")[0]),
+        LIMITS["column_gutter_left_delta_pt"],
+    ))
+    checks.append((
+        "column gutter: right-column text to frame rule matches derived gutter",
+        abs(require(metrics, "column_gutter_right_delta_pt")[0]),
+        LIMITS["column_gutter_right_delta_pt"],
+    ))
 
     sidebar_top_inset = require(metrics, "sidebar_top_inset_pt")[0]
     print(
@@ -74,13 +105,15 @@ def main() -> int:
     )
 
     for idx, value in enumerate(require(metrics, "publication_height_delta_pt"), start=1):
-        checks.append((f"publication {idx}: badge height equals text box height", abs(value), LIMITS["publication_height_delta_pt"]))
+        checks.append((f"publication {idx}: badge height equals trimmed visual text box", abs(value), LIMITS["publication_height_delta_pt"]))
     for idx, value in enumerate(require(metrics, "publication_icon_center_delta_pt"), start=1):
         checks.append((f"publication {idx}: icon center equals badge center", abs(value), LIMITS["publication_icon_center_delta_pt"]))
+    for idx, value in enumerate(require(metrics, "publication_icon_art_size_delta_pt"), start=1):
+        checks.append((f"publication {idx}: icon artwork follows link-icon size parameter", abs(value), LIMITS["publication_icon_art_size_delta_pt"]))
     for idx, value in enumerate(require(metrics, "publication_top_delta_pt"), start=1):
-        checks.append((f"publication {idx}: badge top equals text box top", abs(value), LIMITS["publication_top_delta_pt"]))
+        checks.append((f"publication {idx}: badge top equals trimmed visual text top", abs(value), LIMITS["publication_top_delta_pt"]))
     for idx, value in enumerate(require(metrics, "publication_bottom_delta_pt"), start=1):
-        checks.append((f"publication {idx}: badge bottom equals text box bottom", abs(value), LIMITS["publication_bottom_delta_pt"]))
+        checks.append((f"publication {idx}: badge bottom equals trimmed visual text bottom", abs(value), LIMITS["publication_bottom_delta_pt"]))
     for idx, value in enumerate(require(metrics, "mainsection_rule_center_delta_pt"), start=1):
         checks.append((f"main section {idx}: rule centered on title box", abs(value), LIMITS["mainsection_rule_center_delta_pt"]))
     for idx, value in enumerate(require(metrics, "sideheading_arrow_height_delta_pt"), start=1):

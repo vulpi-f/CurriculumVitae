@@ -18,9 +18,14 @@ metrics emitted in the LaTeX log.
 to fail fast when text edits accidentally break the planned visual alignment:
 
 - `publication_height_delta_pt`: teal publication badge height versus measured
-  publication text height.
+  publication text height after visual trims.
 - `publication_icon_center_delta_pt`: publication icon centre versus badge
   centre.
+- `publication_icon_art_size_delta_pt`: link artwork size versus
+  `\publinkiconsize`.
+- `page_margin_*` and `column_gutter_*`: horizontal geometry derived from the
+  header photo margin, including equal outer margins and equal gutters around
+  the sidebar frame rule.
 - `mainsection_rule_center_delta_pt`: horizontal rules beside titles such as
   `AWARDS` versus the measured title-box centre.
 - `divider_gap_delta_pt`: symmetry check for the vertical gaps around
@@ -49,25 +54,33 @@ assets/spacing controls (`74f088f`), so future retouching should be incremental:
 
 Current high-impact controls in `cv.tex`:
 
-- `\sidearrowwidth`, `\sidearrowheight`, `\sidearrowbaseline`,
-  `\sidearrowboxwidth`, `\sidearrowtrimleft`, `\sidearrowtrimbottom`,
-  `\sidearrowtrimright`, `\sidearrowtrimtop`, `\sideheadinggap`: left-column
-  chevron artwork size, fixed marker box, transparent-canvas crop, baseline, and
-  heading spacing.
+- `\cvphotomarginvalue`: single source for the outer page margin. It is the
+  left margin of the header photo and drives the left sidebar x position, the
+  right edge of the main column, the main-column header anchors, and the derived
+  gutters around the sidebar frame rule.
+- `\cvsidecolumnwidthvalue`, `\cvmaincolumnwidthvalue`,
+  `\cvcolumnrulewidthvalue`: column widths and frame-rule thickness. The rule
+  x coordinate and both gutters are derived from these plus `\cvphotomarginvalue`.
+- `\cvmainvisualgap`: one base vertical rhythm for the right column. It feeds
+  the title/location/description gaps, section/title gaps, and the symmetric
+  gaps around divider rules with equal stretch units.
+- `\sidearrowboxwidth`, `\sidearrowxshift`, `\sidearrowtrimleft`,
+  `\sidearrowtrimbottom`, `\sidearrowtrimright`, `\sidearrowtrimtop`,
+  `\sideheadinggap`: left-column chevron fixed marker box, artwork crop,
+  horizontal correction, and heading spacing.
 - `\sectiontitlegap`: gap between the main-column section titles and the
   horizontal rules.  `\mainsection` measures the title and computes both rule
   widths from `\linewidth`, so the rule pair is anchored to the right-column
   text block.
-- `\dividergap`: symmetric vertical spacing above and below the right-column
-  entry dividers.
-- `\skillgroupvspace`, `\langbarvspace`, `\beforepublicationsgap`: left-column
-  vertical rhythm controls for the digital-skills groups, language bars, and
-  the gap before the publications heading.
-- `\pubiconwidth`, `\pubiconboxwidth`, `\pubicongap`, `\pubiconartwidth`,
+- `\cvskillgroupvspace`, `\cvlangbarvspace`, `\cvsidebeforepublicationsgap`:
+  left-column vertical rhythm controls for the digital-skills groups, language
+  bars, and the gap before the publications heading.
+- `\pubiconwidth`, `\pubiconboxwidth`, `\pubicongap`, `\publinkiconsize`,
   `\pubicontrimleft`, `\pubicontrimbottom`, `\pubicontrimright`,
-  `\pubicontrimtop`, `\pubtextwidth`, `\publineheight`, `\pubentrygap`:
-  publication badge, transparent-canvas crop, text, line-height, and inter-entry
-  spacing controls.
+  `\pubicontrimtop`, `\pubboxvisualtoptrim`, `\pubboxvisualbottomtrim`,
+  `\pubtextwidth`, `\publineheight`, `\pubentrygap`: publication badge,
+  link-artwork size, transparent-canvas crop, visual text trims, text width,
+  line-height, and inter-entry spacing controls.
 - `\orcidboxwidth`, `\orcidartwidth`, `\orcidtrimleft`, `\orcidtrimbottom`,
   `\orcidtrimright`, `\orcidtrimtop`, `\orcidbaseline`: ORCID marker box,
   artwork size, crop, and vertical centring for the publications heading.
