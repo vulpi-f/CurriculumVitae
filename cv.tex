@@ -65,8 +65,8 @@
 % - \cvsideobjectgap distributes macro objects in the sidebar.
 % - \cvsidebeforepublicationsgap adjusts the elastic gap above PUBLICATIONS.
 % - The remaining \cvside... and \cvskill... constants tune sidebar micro-gaps.
-\newcommand{\cvsidebeforepublicationsgap}{\par\vspace{0pt plus 1.10fill}}
-\newcommand{\cvsideheadingcontentgap}{0.82mm}
+\newcommand{\cvsidebeforepublicationsgap}{\cvsideflowgap}
+\newcommand{\cvsideheadingcontentgap}{\cvsideobjectgap}
 \newcommand{\cvsidebodyfontsize}{9.85}
 \newcommand{\cvsidebodybaselineskip}{12.75}
 \newcommand{\cvskillbodybaselineskip}{11.8}
@@ -81,8 +81,9 @@
 \newcommand{\cvskillphysicssep}{5.68mm}
 \newcommand{\cvskillcprogsep}{3.00mm}
 \newcommand{\cvskillmodelingsep}{5.45mm}
-\newcommand{\cvmaincolumnwidth}{139.4mm}
+\newcommand{\cvmaincolumnwidth}{144.58mm}
 \newcommand{\sidearrowboxwidth}{5.45mm}
+\newcommand{\sidearrowxshift}{-0.35mm}
 \newcommand{\sidearrowtrimleft}{59.37bp}
 \newcommand{\sidearrowtrimbottom}{190.74bp}
 \newcommand{\sidearrowtrimright}{59.37bp}
@@ -161,7 +162,7 @@
   \cvmetricdim{sideheading_arrow_height_delta_pt}{\ht\sidearrowtextbox+\dp\sidearrowtextbox-\sideheadingheight}%
   \nointerlineskip
   \noindent
-  \makebox[\sidearrowboxwidth][c]{\usebox{\sidearrowtextbox}}%
+  \makebox[\sidearrowboxwidth][c]{\hspace{\sidearrowxshift}\usebox{\sidearrowtextbox}}%
   \hspace{\sideheadinggap}\usebox{\sideheadingtextbox}\par
   \vspace{\cvsideheadingcontentgap}%
 }
@@ -303,12 +304,12 @@
   \node[anchor=north,text=white,font=\sans\bfseries\fontsize{30.2}{32.3}\selectfont] at (135,3.35) {Fabio Vulpi};
   \node[anchor=north,text=white,font=\sans\bfseries\fontsize{14.4}{15.3}\selectfont] at (135,13.95) {Ph.D. in Mechanical Engineering and Management};
 
-  \node[anchor=west] at (63.8,25.25) {\headeritem{phone}{tel:+393803485030}{+39 3803485030}};
-  \node[anchor=west] at (63.8,25.25) {\makebox[143.2mm][c]{\headeritem{map-marker-alt}{}{70124, Bari (BA), Italy}}};
-  \node[anchor=east] at (207.0,25.25) {\headeritem{calendar-alt}{}{21/12/1995}};
-  \node[anchor=west] at (63.8,31.55) {\headeritem{linkedin}{https://linkedin.com/in/fabio-vulpi}{\headerlink{https://linkedin.com/in/fabio-vulpi}{linkedin.com/in/fabio-vulpi}}};
-  \node[anchor=west] at (63.8,31.55) {\makebox[143.2mm][c]{\headeritem{github}{https://github.com/vulpi-f}{\headerlink{https://github.com/vulpi-f}{github.com/vulpi-f}}}};
-  \node[anchor=east] at (207.0,31.55) {\headeritem{envelope}{mailto:vulpi.fabio@gmail.com}{vulpi.fabio@gmail.com}};
+  \node[anchor=west] at (62.77,25.25) {\headeritem{phone}{tel:+393803485030}{+39 3803485030}};
+  \node[anchor=west] at (62.77,25.25) {\makebox[144.58mm][c]{\headeritem{map-marker-alt}{}{70124, Bari (BA), Italy}}};
+  \node[anchor=east] at (207.35,25.25) {\headeritem{calendar-alt}{}{21/12/1995}};
+  \node[anchor=west] at (62.77,31.55) {\headeritem{linkedin}{https://linkedin.com/in/fabio-vulpi}{\headerlink{https://linkedin.com/in/fabio-vulpi}{linkedin.com/in/fabio-vulpi}}};
+  \node[anchor=west] at (62.77,31.55) {\makebox[144.58mm][c]{\headeritem{github}{https://github.com/vulpi-f}{\headerlink{https://github.com/vulpi-f}{github.com/vulpi-f}}}};
+  \node[anchor=east] at (207.35,31.55) {\headeritem{envelope}{mailto:vulpi.fabio@gmail.com}{vulpi.fabio@gmail.com}};
 
   \node[anchor=north west,inner sep=0pt] at (2.65,\cvsidebarcontenttopvalue) {%
     \begin{minipage}[t][\cvsidebarcontentheight][s]{\cvsidecolumnwidth}
@@ -368,7 +369,7 @@
       \publication{\pubicon}{Wearable Inertial Sensors for\pubbreak Range of Motion Assessment\pubbreak (WISE).}
     \end{minipage}};
 
-  \node[anchor=north west,inner sep=0pt] at (63.7,38.65) {%
+  \node[anchor=north west,inner sep=0pt] at (62.77,38.65) {%
     \begin{minipage}[t][\cvmaincontentheight][s]{\cvmaincolumnwidth}
       \mainsection{WORK EXPERIENCE}
       \entry{Experienced Consultant}{10/2024 - current}
