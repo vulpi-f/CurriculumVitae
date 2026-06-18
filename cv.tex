@@ -46,9 +46,13 @@
 \newcommand{\cvpagewidthvalue}{210.079}
 \newcommand{\cvpageheightvalue}{297.127}
 \newcommand{\cvphotomarginvalue}{3.00}
-\newcommand{\cvsidecolumnwidthvalue}{55.0}
-\newcommand{\cvmaincolumnwidthvalue}{144.58}
-\newcommand{\cvsidebarframerulewidthvalue}{0.78}
+\newcommand{\cvsidecolumnbasewidthvalue}{55.0}
+\newcommand{\cvmaincolumnbasewidthvalue}{144.58}
+\newcommand{\cvsidebarframerulebasewidthvalue}{0.78}
+\newcommand{\cvsidebarframerulewidthvalue}{1.00}
+\pgfmathsetmacro{\cvsidebarframehalfwidthincreasevalue}{0.5*(\cvsidebarframerulewidthvalue-\cvsidebarframerulebasewidthvalue)}
+\pgfmathsetmacro{\cvsidecolumnwidthvalue}{\cvsidecolumnbasewidthvalue-\cvsidebarframehalfwidthincreasevalue}
+\pgfmathsetmacro{\cvmaincolumnwidthvalue}{\cvmaincolumnbasewidthvalue-\cvsidebarframehalfwidthincreasevalue}
 \newcommand{\cvcolumnrulewidthvalue}{\cvsidebarframerulewidthvalue}
 \pgfmathsetmacro{\cvsidecolumnxvalue}{\cvphotomarginvalue}
 \pgfmathsetmacro{\cvsidecolumnrightvalue}{\cvsidecolumnxvalue+\cvsidecolumnwidthvalue}
@@ -243,7 +247,7 @@
 \newlength{\pubheadingheight}
 \newlength{\orcidraise}
 \setlength{\sectiontitlegap}{1.85mm}
-\setlength{\mainsectionrulethickness}{0.65pt}
+\setlength{\mainsectionrulethickness}{1.30pt}
 \newlength{\pubiconcenterx}
 \setlength{\pubiconcenterx}{\dimexpr\pubiconwidth/2\relax}
 
@@ -506,11 +510,11 @@
   \cvsideheadingcontentgap
 }
 
-\newcommand{\publication}[2]{%
+\newcommand{\publication}[3]{%
   \sbox{\pubtextbox}{%
-    \begin{minipage}[t]{\pubtextwidth}\vspace{0pt}\raggedright\fontsize{\cvsidebodyfontsize}{\publineheight}\selectfont #2\end{minipage}}%
+    \begin{minipage}[t]{\pubtextwidth}\vspace{0pt}\raggedright\fontsize{\cvsidebodyfontsize}{\publineheight}\selectfont #3\end{minipage}}%
   \setlength{\pubboxheight}{\dimexpr\ht\pubtextbox+\dp\pubtextbox-\pubboxvisualtoptrim-\pubboxvisualbottomtrim\relax}%
-  \sbox{\pubiconbox}{#1{\pubboxheight}}%
+  \sbox{\pubiconbox}{#2{\pubboxheight}}%
   \setlength{\pubiconraise}{\dimexpr\ht\pubtextbox-\pubboxvisualtoptrim-\ht\pubiconbox\relax}%
   \cvmetricdim{publication_height_delta_pt}{\pubboxheight-\ht\pubtextbox-\dp\pubtextbox+\pubboxvisualtoptrim+\pubboxvisualbottomtrim}%
   \cvmetricdim{publication_icon_center_delta_pt}{\pubiconcenterx-\pubiconwidth/2}%
@@ -518,7 +522,7 @@
   \cvmetricdim{publication_top_delta_pt}{\pubiconraise+\ht\pubiconbox-\ht\pubtextbox+\pubboxvisualtoptrim}%
   \cvmetricdim{publication_bottom_delta_pt}{\pubiconraise-\dp\pubiconbox+\dp\pubtextbox-\pubboxvisualbottomtrim}%
   \noindent
-  \raisebox{\pubiconraise}{\makebox[\pubiconboxwidth][l]{\usebox{\pubiconbox}}}%
+  \raisebox{\pubiconraise}{\makebox[\pubiconboxwidth][l]{\href{#1}{\usebox{\pubiconbox}}}}%
   \hspace{\pubicongap}%
   \usebox{\pubtextbox}%
   \par\cvsidepubentrygap
@@ -617,12 +621,12 @@
   \vspace{\cvpublicationheadingtoptrim}
   \pubheading{PUBLICATIONS}
   \vspace{\cvpublicationheadingcontenttrim}
-  \publication{\pubicon}{Kalman Supervised Network for\pubbreak improved Model Predictions.}
-  \publication{\pubicon}{Recurrent and convolutional\pubbreak NN for deep terrain\pubbreak classification by autonomous\pubbreak robots.}
-  \publication{\pubicon}{An RGB-D multi-view\pubbreak perspective for autonomous\pubbreak agricultural robots.}
-  \publication{\pubicon}{On the role of feature and\pubbreak signal selection for terrain\pubbreak learning in planetary\pubbreak exploration.}
-  \publication{\pubicon}{Usability Study of WISE for\pubbreak Movement Assessment and\pubbreak Exercise.}
-  \publication{\pubicon}{Wearable Inertial Sensors for\pubbreak Range of Motion Assessment\pubbreak (WISE).}
+  \publication{https://ieeexplore.ieee.org/document/9988271}{\pubicon}{Kalman Supervised Network for\pubbreak improved Model Predictions.}
+  \publication{https://www.sciencedirect.com/science/article/abs/pii/S0022489820301117}{\pubicon}{Recurrent and convolutional\pubbreak NN for deep terrain\pubbreak classification by autonomous\pubbreak robots.}
+  \publication{https://www.sciencedirect.com/science/article/abs/pii/S016816992200727X?via\%3Dihub}{\pubicon}{An RGB-D multi-view\pubbreak perspective for autonomous\pubbreak agricultural robots.}
+  \publication{https://onlinelibrary.wiley.com/doi/abs/10.1002/rob.22054}{\pubicon}{On the role of feature and\pubbreak signal selection for terrain\pubbreak learning in planetary\pubbreak exploration.}
+  \publication{https://pmc.ncbi.nlm.nih.gov/articles/PMC7882263/}{\pubicon}{Usability Study of WISE for\pubbreak Movement Assessment and\pubbreak Exercise.}
+  \publication{https://ieeexplore.ieee.org/abstract/document/8935386}{\pubicon}{Wearable Inertial Sensors for\pubbreak Range of Motion Assessment\pubbreak (WISE).}
 }
 
 \newcommand{\cvmaincontent}{%

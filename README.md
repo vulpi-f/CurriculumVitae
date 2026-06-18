@@ -72,8 +72,10 @@ Current high-impact controls in `cv.tex`:
 - `\cvsidecolumnwidthvalue`, `\cvmaincolumnwidthvalue`,
   `\cvsidebarframerulewidthvalue`: column widths and sidebar-frame thickness.
   The frame-rule x coordinate and both gutters are derived from these plus
-  `\cvphotomarginvalue`. `\cvcolumnrulewidthvalue` remains as a compatibility
-  alias for the sidebar-frame rule.
+  `\cvphotomarginvalue`. Increasing the frame thickness automatically removes
+  half of the increment from each column, preserving the visual distance from
+  both text blocks. `\cvcolumnrulewidthvalue` remains as a compatibility alias
+  for the sidebar-frame rule.
 - `\cvmaincontent` and `\cvpreparemainlayout`: right-column content and its
   automatic vertical rhythm. The layout measures the natural content height,
   counts ordinary title/location/description transitions through `\cvmaingap`,
@@ -140,7 +142,8 @@ reference PDF requires controlled line cuts that cannot be reproduced by one
 single natural text width for every publication title; using the semantic macro
 keeps those breaks searchable and easy to retune.  The ORCID asset marks the
 `PUBLICATIONS` heading via `\pubheading`; each publication row uses the teal
-link badge with `FIGURES/CV_link_icon.png`.
+link badge with `FIGURES/CV_link_icon.png`. Each badge receives its publication
+URL as the first argument of `\publication`, so only the icon is clickable.
 
 ## Icon/package notes
 
