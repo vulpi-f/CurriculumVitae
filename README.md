@@ -131,9 +131,9 @@ Current high-impact controls in `cv.tex`:
   link-artwork size, transparent-canvas crop, visual text trims, text width,
   line-height, and inter-entry spacing controls.
 - `\orcidboxwidth`, `\orcidartsize`, `\orcidtrimleft`,
-  `\orcidtrimbottom`, `\orcidtrimright`, `\orcidtrimtop`: ORCID marker box,
-  fixed artwork size, crop, and heading-centred vertical placement for the
-  publications heading.
+  `\orcidtrimbottom`, `\orcidtrimright`, `\orcidtrimtop`, `\orcidurl`: ORCID
+  marker box, fixed artwork size, crop, heading-centred vertical placement,
+  and clickable profile URL for the publications heading.
 - Header/content anchor coordinates inside the root `tikzpicture`: use these
   only after the local size controls above are exhausted.
 

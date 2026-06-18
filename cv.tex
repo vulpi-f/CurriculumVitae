@@ -225,6 +225,7 @@
 \newcommand{\pubicontrimtop}{0bp}
 \newcommand{\orcidboxwidth}{5.45mm}
 \newcommand{\orcidartsize}{5.18mm}
+\newcommand{\orcidurl}{https://orcid.org/0000-0002-0216-8398}
 \newcommand{\orcidtrimleft}{0bp}
 \newcommand{\orcidtrimbottom}{0bp}
 \newcommand{\orcidtrimright}{0bp}
@@ -491,12 +492,13 @@
 
 \newcommand{\orcidicon}{%
   \makebox[\orcidboxwidth][c]{%
-    \raisebox{\orcidraise}{%
-      \includegraphics[
-        height=\orcidartsize,
-        trim=\orcidtrimleft{} \orcidtrimbottom{} \orcidtrimright{} \orcidtrimtop{},
-        clip
-      ]{CV_orcid_icon.png}}}%
+    \href{\orcidurl}{%
+      \raisebox{\orcidraise}{%
+        \includegraphics[
+          height=\orcidartsize,
+          trim=\orcidtrimleft{} \orcidtrimbottom{} \orcidtrimright{} \orcidtrimtop{},
+          clip
+        ]{CV_orcid_icon.png}}}}%
 }
 
 \newcommand{\pubheading}[1]{%
