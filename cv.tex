@@ -87,11 +87,12 @@
 \newlength{\cvsidebarcontentheight}
 \newlength{\cvmaincontentheight}
 \newlength{\cvsidecomputedgap}
+\newlength{\cvsidecomputedpublicationgap}
 \newlength{\cvsidenaturalheight}
 \newlength{\cvsideremainingheight}
 \newlength{\cvsideusedheight}
 \newcommand{\cvsidebarframetopvalue}{39.02}
-\newcommand{\cvsideframetopinsetvalue}{0.34}
+\newcommand{\cvsideframetopinsetvalue}{-0.45}
 \pgfmathsetmacro{\cvsidebarcontenttopvalue}{\cvsidebarframetopvalue+\cvsideframetopinsetvalue}
 \setlength{\cvcontentbottom}{292.55mm}
 \setlength{\cvsidebarframetop}{\cvsidebarframetopvalue mm}
@@ -109,6 +110,8 @@
 \newlength{\cvmainusedheight}
 \newcount\cvmaingapcount
 \newcount\cvsidegapcount
+\newcount\cvsideordinarygapcount
+\newcount\cvsidepublicationgapcount
 \newcount\cvmainbodygapcount
 \newcount\cvmaindividergapcount
 \newcount\cvmainsectiongapcount
@@ -126,33 +129,46 @@
 \newcommand{\cvsidegap}{%
   \ifcvsidemeasuring
     \global\advance\cvsidegapcount by 1
+    \global\advance\cvsideordinarygapcount by 1
   \fi
   \vspace{\cvsidecomputedgap}%
+}
+\newcommand{\cvsidepublicationgap}{%
+  \ifcvsidemeasuring
+    \global\advance\cvsidegapcount by 1
+    \global\advance\cvsidepublicationgapcount by 1
+  \fi
+  \vspace{\cvsidecomputedpublicationgap}%
 }
 \newcommand{\cvsideflowgap}{\par\cvsidegap}
 \newcommand{\cvsidestartflowgap}{%
   \ifcvsidemeasuring
     \global\advance\cvsidegapcount by 1
+    \global\advance\cvsideordinarygapcount by 1
   \fi
   \vspace*{\cvsidecomputedgap}%
 }
 % Sidebar tuning knobs:
-% - \cvsideframetopinsetvalue aligns the sidebar minipage with the inner
-%   edge of the top frame rule; the visible top padding is computed.
+% - \cvsideframetopinsetvalue fine-tunes the sidebar minipage against the top
+%   frame rule; the visible first-heading offset is then completed by the
+%   computed ordinary gap.
 % - \cvsideobjectgap is computed from the measured natural sidebar height, so
 %   title/content boundaries, section-to-section boundaries, skill-subgroup
-%   title/content boundaries, and publication gaps all share one fixed rhythm.
+%   title/content boundaries, and the start of the sidebar share one rhythm.
+%   Publication-entry gaps use a separately adjustable weight while still
+%   participating in the same exact-height calculation.
 % - \cvsidestartflowgap preserves the first computed gap at minipage top, where
 %   plain \vspace would be discarded.
 % - The remaining \cvside... and \cvskill... constants tune sidebar micro-gaps.
 \newcommand{\cvsidebeforepublicationsgap}{\cvsideflowgap}
 \newcommand{\cvsideheadingcontentgap}{\cvsidegap}
-\newcommand{\cvsidebodyfontsize}{9.85}
+\newcommand{\cvsidepublicationgapfactor}{1.08}
+\newcommand{\cvsidebodyfontsize}{10.15}
 \newcommand{\cvsidebodybaselineskip}{12.75}
 \newcommand{\cvskillbodybaselineskip}{11.8}
-\newcommand{\cvsoftskilltriangleheightvalue}{14.2}
+\newcommand{\cvsoftskilltriangleheightvalue}{15.8}
 \newcommand{\cvsoftskilltriangletopvalue}{1.50}
-\newcommand{\cvsoftskilltrianglebasevalue}{10.75}
+\newcommand{\cvsoftskilltrianglebasevalue}{12.35}
 \newcommand{\cvsoftskilltrianglerule}{0.42pt}
 % Fixed visual trims compensate the top line boxes of the following content
 % objects.  The measured spacing itself remains \cvsideobjectgap; these trims
@@ -165,18 +181,18 @@
 \newcommand{\cvskillrowgap}{0.22mm}
 \newcommand{\cvlangbarvspace}{\cvskillrowgap}
 \newcommand{\cvlangentryvspace}{\cvskillrowgap}
-\newcommand{\cvsidepubentrygap}{\cvsidegap}
+\newcommand{\cvsidepubentrygap}{\cvsidepublicationgap}
 \newcommand{\cvsidecolumnwidth}{\cvsidecolumnwidthvalue mm}
 \newcommand{\cvskillseparator}[1]{\hspace{#1}\vrule\hspace{#1}}
-\newcommand{\cvskillphysicssep}{5.68mm}
-\newcommand{\cvskillcprogsep}{3.00mm}
-\newcommand{\cvskillmodelingsep}{5.45mm}
+\newcommand{\cvskillphysicssep}{5.00mm}
+\newcommand{\cvskillcprogsep}{2.80mm}
+\newcommand{\cvskillmodelingsep}{4.75mm}
 \newcommand{\cvmaincolumnwidth}{\cvmaincolumnwidthvalue mm}
 \newcommand{\sideheadingfontsize}{14.8}
 \newcommand{\sideheadingbaselineskip}{15.6}
-\newcommand{\sidearrowheight}{5.55mm}
+\newcommand{\sidearrowheight}{5.00mm}
 \newcommand{\sidearrowboxwidth}{5.45mm}
-\newcommand{\sidearrowxshift}{-0.25mm}
+\newcommand{\sidearrowxshift}{0.15mm}
 \newcommand{\sidearrowtrimleft}{59.37bp}
 \newcommand{\sidearrowtrimbottom}{190.74bp}
 \newcommand{\sidearrowtrimright}{59.37bp}
@@ -193,7 +209,7 @@
 \newcommand{\cvsidebarframeradius}{5.3mm}
 \newcommand{\cvsidebarframecutleftvalue}{-0.45}
 \newcommand{\cvsidebarframecutrightvalue}{7.20}
-\newcommand{\cvsidebarframecutrisevalue}{0.75}
+\newcommand{\cvsidebarframecutrisevalue}{1.50}
 \newcommand{\cvsidebarframecutdropvalue}{5.40}
 \newcommand{\publinkiconsize}{4.86mm}
 \newcommand{\pubiconartwidth}{\publinkiconsize}
@@ -364,7 +380,10 @@
 
 \newcommand{\cvpreparesidelayout}{%
   \setlength{\cvsidecomputedgap}{0pt}%
+  \setlength{\cvsidecomputedpublicationgap}{0pt}%
   \global\cvsidegapcount=0
+  \global\cvsideordinarygapcount=0
+  \global\cvsidepublicationgapcount=0
   \cvsidemeasuringtrue
   \cvsuppressmetricstrue
   \sbox{\cvsidemeasurebox}{%
@@ -376,13 +395,18 @@
   \setlength{\cvsidenaturalheight}{\dimexpr\ht\cvsidemeasurebox+\dp\cvsidemeasurebox\relax}%
   \setlength{\cvsideremainingheight}{\dimexpr\cvsidebarcontentheight-\cvsidenaturalheight\relax}%
   \ifnum\cvsidegapcount>0
-    \pgfmathsetlength{\cvsidecomputedgap}{\cvsideremainingheight/\the\cvsidegapcount}%
+    \pgfmathsetlength{\cvsidecomputedgap}{\cvsideremainingheight/(\the\cvsideordinarygapcount+\the\cvsidepublicationgapcount*\cvsidepublicationgapfactor)}%
+    \pgfmathsetlength{\cvsidecomputedpublicationgap}{\cvsidecomputedgap*\cvsidepublicationgapfactor}%
   \else
     \setlength{\cvsidecomputedgap}{0pt}%
+    \setlength{\cvsidecomputedpublicationgap}{0pt}%
   \fi
-  \setlength{\cvsideusedheight}{\dimexpr\cvsidenaturalheight+\number\cvsidegapcount\cvsidecomputedgap\relax}%
+  \setlength{\cvsideusedheight}{\dimexpr\cvsidenaturalheight+\number\cvsideordinarygapcount\cvsidecomputedgap+\number\cvsidepublicationgapcount\cvsidecomputedpublicationgap\relax}%
   \cvmetricdim{sidebar_auto_gap_count_pt}{\number\cvsidegapcount pt}%
+  \cvmetricdim{sidebar_auto_ordinary_gap_count_pt}{\number\cvsideordinarygapcount pt}%
+  \cvmetricdim{sidebar_auto_publication_gap_count_pt}{\number\cvsidepublicationgapcount pt}%
   \cvmetricdim{sidebar_auto_gap_pt}{\cvsidecomputedgap}%
+  \cvmetricdim{sidebar_auto_publication_gap_pt}{\cvsidecomputedpublicationgap}%
   \cvmetricdim{sidebar_auto_gap_balance_delta_pt}{\cvsideusedheight-\cvsidebarcontentheight}%
 }
 
@@ -413,13 +437,13 @@
 }
 
 \newcommand{\langbar}[3]{%
-  {\fontsize{10.2}{11.0}\selectfont #1\par}
+  {\fontsize{\cvsidebodyfontsize}{11.0}\selectfont #1\par}
   \vspace{\cvlangbarvspace}
   \begin{tikzpicture}[x=1mm,y=1mm]
     \fill[cvlight,rounded corners=0.65mm] (0,0) rectangle (45.5,1.65);
     \fill[cvteal,rounded corners=0.65mm] (0,0) rectangle (#3,1.65);
   \end{tikzpicture}%
-  \hfill{\fontsize{10.4}{11.0}\selectfont #2}\par
+  \hfill{\fontsize{\cvsidebodyfontsize}{11.0}\selectfont #2}\par
 }
 
 \newcommand{\softskilltriangle}{%
@@ -484,7 +508,7 @@
 
 \newcommand{\publication}[2]{%
   \sbox{\pubtextbox}{%
-    \begin{minipage}[t]{\pubtextwidth}\vspace{0pt}\raggedright\fontsize{10.15}{\publineheight}\selectfont #2\end{minipage}}%
+    \begin{minipage}[t]{\pubtextwidth}\vspace{0pt}\raggedright\fontsize{\cvsidebodyfontsize}{\publineheight}\selectfont #2\end{minipage}}%
   \setlength{\pubboxheight}{\dimexpr\ht\pubtextbox+\dp\pubtextbox-\pubboxvisualtoptrim-\pubboxvisualbottomtrim\relax}%
   \sbox{\pubiconbox}{#1{\pubboxheight}}%
   \setlength{\pubiconraise}{\dimexpr\ht\pubtextbox-\pubboxvisualtoptrim-\ht\pubiconbox\relax}%
@@ -558,7 +582,7 @@
   \cvsideflowgap
   \sideheading{SOFT-SKILLS}
   \vspace{\cvsoftskillheadingcontenttrim}
-  {\fontsize{9.9}{11.1}\selectfont\softskilltriangle}
+  {\fontsize{\cvsidebodyfontsize}{11.1}\selectfont\softskilltriangle}
 
   \cvsideflowgap
   \sideheading{DIGITAL SKILLS}

@@ -117,6 +117,15 @@ def main() -> int:
     sidebar_top_inset = require(metrics, "sidebar_top_inset_pt")[0]
     sidebar_gap_count = require(metrics, "sidebar_auto_gap_count_pt")[0]
     sidebar_gap = require(metrics, "sidebar_auto_gap_pt")[0]
+    sidebar_ordinary_gap_count = metrics.get(
+        "sidebar_auto_ordinary_gap_count_pt", [sidebar_gap_count]
+    )[0]
+    sidebar_publication_gap_count = metrics.get(
+        "sidebar_auto_publication_gap_count_pt", [0.0]
+    )[0]
+    sidebar_publication_gap = metrics.get(
+        "sidebar_auto_publication_gap_pt", [sidebar_gap]
+    )[0]
     checks.append((
         "sidebar column: measured elements plus computed gaps fill the frame",
         abs(require(metrics, "sidebar_auto_gap_balance_delta_pt")[0]),
@@ -127,8 +136,13 @@ def main() -> int:
         f"{sidebar_top_inset:.3f}pt; adjust \\cvsideframetopinsetvalue to move ABOUT ME"
     )
     print(
-        "INFO: sidebar column object gap: "
-        f"{sidebar_gap:.3f}pt across {int(round(sidebar_gap_count))} measured transitions"
+        "INFO: sidebar column ordinary gap: "
+        f"{sidebar_gap:.3f}pt across {int(round(sidebar_ordinary_gap_count))} transitions"
+    )
+    print(
+        "INFO: sidebar column publication gap: "
+        f"{sidebar_publication_gap:.3f}pt across "
+        f"{int(round(sidebar_publication_gap_count))} transitions"
     )
     print(
         "INFO: main column body gap: "
@@ -168,6 +182,10 @@ def main() -> int:
     failed = False
     for label, value in (
         ("sidebar column: object gap remains non-negative", sidebar_gap),
+        (
+            "sidebar column: publication gap remains non-negative",
+            sidebar_publication_gap,
+        ),
         ("main column: ordinary gap remains non-negative", main_gap),
         ("main column: divider gap remains non-negative", main_divider_gap),
         ("main column: section gap remains non-negative", main_section_gap),
