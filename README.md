@@ -1,169 +1,299 @@
-# Curriculum Vitae
+# Fabio Vulpi — One-page LaTeX CV
 
-LaTeX source for Fabio Vulpi's one-page CV.
+Questa repository contiene il CV professionale di Fabio Vulpi e il relativo
+sistema di layout in LaTeX. Non è una riproduzione statica: è un documento vivo,
+progettato per essere aggiornato nel tempo con nuove esperienze, competenze,
+pubblicazioni e risultati.
 
-## Build
+L'obiettivo è mantenere una sola pagina moderna, leggibile e visivamente
+equilibrata, massimizzando la densità di informazioni rilevanti. Gli
+aggiornamenti possono essere eseguiti manualmente oppure con l'assistenza di un
+agente AI, che deve sintetizzare i contenuti e rispettare i vincoli geometrici
+del template.
+
+## Principi editoriali
+
+- Il CV deve restare su una sola pagina.
+- Ogni frase deve aggiungere informazione professionale utile.
+- Le esperienze più recenti e rilevanti ricevono più spazio.
+- Le descrizioni privilegiano responsabilità, ambito, tecnologie e impatto.
+- Ripetizioni, formule generiche e dettagli a basso valore vengono rimossi.
+- La densità non deve compromettere leggibilità, gerarchia visiva o allineamenti.
+- Il testo si adatta al layout prima di modificare la geometria strutturale.
+- I contenuti visibili del CV sono scritti in inglese, con terminologia e tempi
+  verbali coerenti tra voci equivalenti.
+- Le date seguono il formato `MM/YYYY`; usare `current` per il ruolo in corso.
+- Link, date, nomi, tecnologie e risultati devono essere verificabili e
+  fattualmente corretti.
+
+Il numero di caratteri è un utile indicatore preliminare dello spazio occupato,
+ma l'autorità finale è sempre il rendering LaTeX: parole, punteggiatura,
+maiuscole e link hanno larghezze differenti.
+
+Budget orientativi, non rigidi:
+
+- ruolo corrente o altamente rilevante: circa 280–420 caratteri;
+- esperienza secondaria: circa 180–320 caratteri;
+- esperienza breve o transitoria: circa 80–180 caratteri;
+- premio o progetto sintetico: circa 220–380 caratteri.
+
+Quando lo spazio non basta, ridurre prima ridondanze e contenuto meno rilevante.
+La riduzione dei font o l'alterazione delle dimensioni della pagina sono misure
+di ultima istanza.
+
+## Build e validazione
 
 ```sh
 latexmk -pdf -interaction=nonstopmode cv.tex
 python3 scripts/check_visual_metrics.py cv.log
 ```
 
-The generated file is `cv.pdf`.  The second command validates the visual-layout
-metrics emitted in the LaTeX log.
+Il file generato è `cv.pdf`. Dopo ogni modifica:
 
-## Visual metrics
+1. verificare che la compilazione termini senza errori;
+2. verificare che il PDF contenga una sola pagina;
+3. eseguire lo script delle metriche e richiedere esito positivo;
+4. controllare `cv.log` per nuovi `Overfull` o `Underfull`;
+5. ispezionare il PDF a pagina intera e con zoom sui due margini inferiori,
+   sulle intestazioni e sui link.
 
-`cv.tex` emits `CVVISUAL|...` lines while it builds.  These values are intended
-to fail fast when text edits accidentally break the planned visual alignment:
+Controllo rapido del numero di pagine nel log:
 
-- `publication_height_delta_pt`: teal publication badge height versus measured
-  publication text height after visual trims.
-- `publication_icon_center_delta_pt`: publication icon centre versus badge
-  centre.
-- `publication_icon_art_size_delta_pt`: link artwork size versus
-  `\publinkiconsize`.
-- `page_margin_*` and `column_gutter_*`: horizontal geometry derived from the
-  header photo margin, including equal outer margins and equal gutters around
-  the sidebar frame rule.
-- `main_auto_gap_count_pt`, `main_auto_gap_pt`,
-  `main_auto_divider_gap_pt`, `main_auto_section_gap_pt`, and
-  `main_auto_gap_balance_delta_pt`:
-  right-column content is measured with zero gaps, the remaining height is
-  divided across ordinary, divider-rule, and section-title transitions, and
-  the result must fill the frame exactly while staying non-negative.
-- `sidebar_auto_gap_count_pt`, `sidebar_auto_gap_pt`,
-  `sidebar_auto_publication_gap_pt`, and
-  `sidebar_auto_gap_balance_delta_pt`: left-column content is measured with
-  zero object gaps, then the remaining sidebar height is distributed across
-  ordinary and publication-entry transitions using their configured weights.
-- `mainsection_rule_center_delta_pt`: horizontal rules beside titles such as
-  `AWARDS` versus the measured title-box centre.
-- `divider_gap_delta_pt`: symmetry check for the vertical gaps around
-  right-column dividers.
+```sh
+rg "Output written on cv.pdf \\(1 page" cv.log
+```
 
-Run `python3 scripts/check_visual_metrics.py cv.log` after each PDF build to
-apply the current tolerances.
+## Struttura della repository
 
-## Structure
+- `cv.tex`: contenuti, componenti e parametri del layout.
+- `cv.pdf`: output principale generato.
+- `scripts/check_visual_metrics.py`: validazione automatica degli invarianti
+  geometrici.
+- `FIGURES/CV_picture_canva.png`: immagine usata nell'header.
+- `FIGURES/CV_side_arrow.png`: freccia delle intestazioni della sidebar.
+- `FIGURES/CV_link_icon.png`: icona cliccabile delle pubblicazioni.
+- `FIGURES/CV_orcid_icon.png`: icona ORCID cliccabile.
 
-- `cv.tex`: main LaTeX source.
-- `FIGURES/CV_picture_canva.png`: header photo extracted from the Canva reference PDF.
-- `FIGURES/CV_picture.JPG`: original profile photo.
+I PDF generati non devono essere modificati manualmente: ogni cambiamento deve
+essere riproducibile a partire da `cv.tex`.
 
-## Visual calibration notes for future edits
+## Organizzazione dei contenuti
 
-This repository is tuned as a one-page, absolute-positioned reproduction of the
-reference CV.  The commit history shows that the largest visual changes came
-from replacing the header crop (`138a969`) and then introducing dedicated icon
-assets/spacing controls (`74f088f`), so future retouching should be incremental:
+La sidebar è definita in `\cvsidecontent` e contiene:
 
-1. Rebuild `cv.pdf`.
-2. Compare against the reference PDF at full-page scale first, then at 200%.
-3. Change the named constants near the top of `cv.tex` before moving individual
-   coordinates.
+- profilo sintetico;
+- soft skills;
+- competenze tecniche;
+- lingue;
+- pubblicazioni.
 
-Current high-impact controls in `cv.tex`:
+Il corpo principale è definito in `\cvmaincontent` e contiene:
 
-- `\cvphotomarginvalue`: single source for the outer page margin. It is the
-  left margin of the header photo and drives the left sidebar x position, the
-  right edge of the main column, the main-column header anchors, and the derived
-  gutters around the sidebar frame rule.
-- `\cvsidecolumnwidthvalue`, `\cvmaincolumnwidthvalue`,
-  `\cvsidebarframerulewidthvalue`: column widths and sidebar-frame thickness.
-  The frame-rule x coordinate and both gutters are derived from these plus
-  `\cvphotomarginvalue`. Increasing the frame thickness automatically removes
-  half of the increment from each column, preserving the visual distance from
-  both text blocks. `\cvcolumnrulewidthvalue` remains as a compatibility alias
-  for the sidebar-frame rule.
-- `\cvmaincontent` and `\cvpreparemainlayout`: right-column content and its
-  automatic vertical rhythm. The layout measures the natural content height,
-  counts ordinary title/location/description transitions through `\cvmaingap`,
-  counts divider-rule transitions through `\cvmaindividergap`, counts
-  section-title transitions through `\cvmainsectiongap`, and fills
-  `\cvmaincontentheight` with separate computed gaps. Tune
-  `\cvmainbodygapshare`, `\cvmaindividergapshare`, and
-  `\cvmainsectiongapshare`; the three shares are intended to sum to `1`, and
-  equal shares produce equal individual gap sizes.
-- `\sideheadingfontsize`, `\sidearrowheight`, `\sidearrowboxwidth`,
-  `\sidearrowxshift`, `\sidearrowtrimleft`, `\sidearrowtrimbottom`,
-  `\sidearrowtrimright`, `\sidearrowtrimtop`, `\sideheadingtextoffset`,
-  `\sideheadinggap`, `\pubheadinggap`: left-column heading size, chevron
-  height, fixed marker box, artwork crop, horizontal correction, and heading
-  spacing. `\sideheadingtextoffset` keeps the larger chevron from crowding the
-  title text while `\pubheadinggap` keeps the publication title on its row grid.
-- `\cvsidebarframecutleftvalue`, `\cvsidebarframecutrightvalue`,
-  `\cvsidebarframecutrisevalue`, and `\cvsidebarframecutdropvalue`: triangular
-  sidebar-frame cutout that aligns the top border with the extended upper rear
-  edge of the first chevron.
-- `\sectiontitlegap`, `\mainsectionrulethickness`: gap between the main-column
-  section titles and the horizontal rules, plus the rule thickness itself.
-  `\mainsection` measures the title and computes both rule widths from
-  `\linewidth`, so the rule pair is anchored to the right-column text block and
-  vertically centered after thickness changes.
-- `\cvheader...`: header typography, anchors, and vertical rhythm calibrated
-  against the reference PDF. The name uses Montserrat Bold 27.4 pt, the
-  subtitle Montserrat SemiBold 12.02 pt, and contacts Montserrat Regular 8 pt.
-  Header content is emitted in page coordinates rather than inside the
-  inverted TikZ canvas, so the LinkedIn and GitHub annotations stay attached
-  only to their respective text.
-- `\cvsidecontent`, `\cvpreparesidelayout`, and `\cvsideobjectgap`:
-  left-column content and measured automatic vertical rhythm. The layout first
-  measures the sidebar with zero object gaps, counts ordinary and publication
-  transitions, and then computes both gap sizes so the content fills the
-  sidebar frame.
-- `\cvskillgroupvspace`, `\cvlangbarvspace`,
-  `\cvsidebeforepublicationsgap`, `\cvsidepublicationgapfactor`: left-column
-  vertical rhythm controls for the digital-skills groups, language bars, the
-  gap before the publications heading, and the slightly independent spacing
-  between publication entries.
-- `\cvsidebodyfontsize`: shared body-text size for the about text, soft-skill
-  labels, digital-skill tables, language labels, and publication titles.
+- esperienze lavorative;
+- formazione;
+- premi.
+
+Componenti semantici principali:
+
+```tex
+\entry{Ruolo}{Periodo}{Azienda con eventuale \cvlink}{Luogo}{Descrizione}
+\awardentry{Organizzazione e luogo}{Premio e data}{Descrizione}
+\publication{URL}{\pubicon}{Titolo}
+\skillgroup{Titolo}{Contenuto}
+\langbar{Lingua}{Livello}{Lunghezza barra}
+```
+
+Usare questi componenti invece di inserire spazi o coordinate locali. Le
+pubblicazioni usano `\pubbreak` per suggerire interruzioni controllate senza
+introdurre ritorni a capo rigidi nel testo ricercabile.
+
+## Vincoli verificati automaticamente
+
+Durante la compilazione, `cv.tex` emette righe `CVVISUAL|...` nel log.
+`scripts/check_visual_metrics.py` applica le tolleranze correnti e fallisce
+quando un invariante viene violato.
+
+Le verifiche coprono:
+
+- simmetria dei margini esterni;
+- distanza coerente tra la cornice della sidebar e le due colonne;
+- corrispondenza tra top, bottom e altezze utili;
+- riempimento verticale esatto della sidebar;
+- riempimento verticale esatto della colonna principale;
+- spazi verticali calcolati non negativi;
+- bilanciamento dei gap ordinari, dei divisori e dei titoli principali;
+- allineamento delle frecce con i titoli della sidebar;
+- centratura delle righe orizzontali sui titoli principali;
+- simmetria degli spazi sopra e sotto i divisori;
+- altezza e allineamento dei badge delle pubblicazioni;
+- centratura e dimensione dell'icona interna ai badge.
+
+Metriche principali:
+
+- `page_margin_*`, `column_gutter_*`: margini e gutter orizzontali;
+- `main_auto_gap_*`: distribuzione verticale del corpo principale;
+- `sidebar_auto_gap_*`: distribuzione verticale della sidebar;
+- `sidebar_auto_publication_gap_*`: spaziatura specifica delle pubblicazioni;
+- `mainsection_rule_center_delta_pt`: centratura delle righe dei titoli;
+- `divider_gap_delta_pt`: simmetria dei divisori;
+- `sideheading_arrow_height_delta_pt`: altezza visiva delle frecce;
+- `publication_*`: geometria dei badge e delle icone.
+
+Un esito positivo dello script è necessario ma non sufficiente: il controllo
+visivo resta obbligatorio per intercettare sillabazioni sgradevoli, righe troppo
+dense, collisioni e gerarchie poco equilibrate.
+
+## Parametri utili per modifiche manuali
+
+Modificare prima i parametri nominati nella parte iniziale di `cv.tex`. Evitare
+coordinate assolute locali finché esiste un controllo dedicato.
+
+### Geometria generale
+
+- `\cvphotomarginvalue`: margine esterno condiviso.
+- `\cvsidecolumnbasewidthvalue`, `\cvmaincolumnbasewidthvalue`: larghezze base
+  delle colonne.
+- `\cvsidebarframerulewidthvalue`: spessore della cornice; l'incremento viene
+  compensato simmetricamente sulle due colonne.
+- `\cvsidebarframetopvalue`, `\cvsideframetopinsetvalue`,
+  `\cvcontentbottom`: limiti verticali utili.
+
+### Ritmo verticale
+
+- `\cvmainbodygapshare`, `\cvmaindividergapshare`,
+  `\cvmainsectiongapshare`: pesi dei gap della colonna principale; la loro
+  somma deve restare pari a `1`.
+- `\cvsidepublicationgapfactor`: rapporto tra gap delle pubblicazioni e gap
+  ordinari della sidebar.
+- `\cvaboutheadingcontenttrim`, `\cvsoftskillheadingcontenttrim`,
+  `\cvpublicationheadingtoptrim`, `\cvpublicationheadingcontenttrim`:
+  micro-correzioni visive locali.
+
+### Tipografia e intestazioni
+
+- `\cvsidebodyfontsize`, `\cvsidebodybaselineskip`,
+  `\cvskillbodybaselineskip`: testo della sidebar.
+- `\sideheadingfontsize`, `\sideheadingbaselineskip`: titoli della sidebar.
+- `\sidearrowheight`, `\sidearrowxshift`, `\sideheadingtextoffset`: freccia e
+  distanza dal titolo.
+- `\sectiontitlegap`, `\mainsectionrulethickness`: titoli del corpo principale.
+- parametri `\cvheader...`: tipografia e coordinate dell'header.
+
+### Elementi speciali
+
 - `\cvsoftskilltriangleheightvalue`, `\cvsoftskilltriangletopvalue`,
-  `\cvsoftskilltrianglebasevalue`, `\cvsoftskilltrianglerule`: soft-skill
-  triangle height, vertex placement, and stroke thickness. Increasing the
-  triangle height reduces the automatically distributed sidebar gaps and pulls
-  the first sidebar heading slightly upward.
-- `\pubiconwidth`, `\pubiconboxwidth`, `\pubicongap`, `\publinkiconsize`,
-  `\pubicontrimleft`, `\pubicontrimbottom`, `\pubicontrimright`,
-  `\pubicontrimtop`, `\pubboxvisualtoptrim`, `\pubboxvisualbottomtrim`,
-  `\pubtextwidth`, `\publineheight`, `\pubentrygap`: publication badge,
-  link-artwork size, transparent-canvas crop, visual text trims, text width,
-  line-height, and inter-entry spacing controls.
-- `\orcidboxwidth`, `\orcidartsize`, `\orcidtrimleft`,
-  `\orcidtrimbottom`, `\orcidtrimright`, `\orcidtrimtop`, `\orcidurl`: ORCID
-  marker box, fixed artwork size, crop, heading-centred vertical placement,
-  and clickable profile URL for the publications heading.
-- Header/content anchor coordinates inside the root `tikzpicture`: use these
-  only after the local size controls above are exhausted.
+  `\cvsoftskilltrianglebasevalue`: geometria del triangolo soft skills.
+- `\cvskillphysicssep`, `\cvskillcprogsep`, `\cvskillmodelingsep`: separazione
+  delle colonne nelle tabelle delle competenze.
+- `\pubiconwidth`, `\pubiconboxwidth`, `\pubicongap`,
+  `\publinkiconsize`, `\publineheight`: pubblicazioni.
+- `\orcidboxwidth`, `\orcidartsize`, `\orcidurl`: icona e link ORCID.
+- parametri `trim`: ritaglio della tela trasparente delle immagini; non
+  modificarli per compensare problemi di testo.
 
-Publication line breaks are encoded with `\pubbreak`, not raw `\\`.  The
-reference PDF requires controlled line cuts that cannot be reproduced by one
-single natural text width for every publication title; using the semantic macro
-keeps those breaks searchable and easy to retune.  The ORCID asset marks the
-`PUBLICATIONS` heading via `\pubheading`; each publication row uses the teal
-link badge with `FIGURES/CV_link_icon.png`. Each badge receives its publication
-URL as the first argument of `\publication`, so only the icon is clickable.
+## Strategia per aggiungere nuove esperienze
 
-## Icon/package notes
+1. Raccogliere soltanto informazioni confermate: ruolo, azienda, luogo, date,
+   responsabilità, tecnologie, standard, dominio e risultati.
+2. Collocare la nuova esperienza in ordine cronologico inverso.
+3. Scrivere una prima versione ad alta densità informativa.
+4. Eliminare contenuti già impliciti nel titolo del ruolo o ripetuti altrove.
+5. Preferire verbi specifici: `designed`, `integrated`, `validated`,
+   `configured`, `developed`, `led`, `optimized`.
+6. Conservare sigle e tecnologie utili ai sistemi ATS, accompagnandole con
+   contesto sufficiente.
+7. Compilare e leggere i gap calcolati.
+8. Se i gap diventano negativi o il layout è troppo affollato, abbreviare in
+   questo ordine:
+   - nuova descrizione;
+   - descrizioni meno recenti;
+   - dettagli ridondanti di formazione e premi;
+   - contenuti della sidebar a minore priorità.
+9. Ritoccare il layout solo dopo aver esaurito una ragionevole sintesi
+   editoriale.
 
-Online package checks performed for icon matching:
+Una buona descrizione segue, quando possibile, questa sequenza:
 
-- CTAN `fontawesome5` provides LaTeX support for the Font Awesome 5 Free set and
-  supports `\faIcon{...}` names such as `phone`, `map-marker-alt`, `calendar-alt`,
-  `linkedin`, `github`, `envelope`, and `link`.
-- CTAN `academicons` provides academic-profile icons, including ORCID.  The
-  current source keeps the existing `FIGURES/CV_orcid_icon.png` asset because it
-  matches the reference colour/shape closely without requiring a new TeX package.
-- The side-section arrow uses the high-resolution transparent
-  `FIGURES/CV_side_arrow.png` asset.  The `\sidearrowtrim...` constants clip
-  away transparent canvas before the icon is placed in its fixed marker box, so
-  replacing the PNG does not change the text offset.
-- The publication link icon uses the high-resolution transparent
-  `FIGURES/CV_link_icon.png` inside a dynamic TikZ badge.  The
-  `\pubicontrim...` constants clip the icon canvas and the badge centres the
-  visible artwork against each publication text box.
+```text
+Azione e responsabilità → sistema o dominio → tecnologie/metodi → risultato o impatto
+```
 
-If a future editor installs extra LaTeX packages and wants a font-based ORCID
-icon, test `academicons` or the ORCID icon available in newer Font Awesome
-bindings against the reference PDF before replacing the current asset.
+Non inventare metriche quantitative. Se l'impatto non è numericamente
+documentato, descriverlo in termini di scopo, responsabilità o risultato
+tecnico.
+
+## Istruzioni operative per agenti AI e LLM
+
+Questa sezione è normativa per gli agenti che modificano il CV.
+
+### Priorità
+
+1. Accuratezza fattuale.
+2. Rilevanza professionale.
+3. Vincolo di una pagina.
+4. Densità informativa.
+5. Leggibilità e qualità visiva.
+6. Conservazione dello stile esistente.
+
+### Procedura obbligatoria
+
+1. Leggere `cv.tex`, `README.md` e lo stato Git prima di intervenire.
+2. Preservare modifiche esistenti non correlate.
+3. Distinguere tra modifica dei contenuti e modifica del layout.
+4. Per nuovi contenuti, modificare prima `\cvmaincontent` o `\cvsidecontent`.
+5. Usare i componenti semantici esistenti; non duplicarne il markup.
+6. Stimare il budget di caratteri confrontando la nuova voce con voci di pari
+   importanza già presenti.
+7. Compilare dopo ogni variazione sostanziale.
+8. Eseguire `scripts/check_visual_metrics.py`.
+9. Controllare il log per overflow e confermare una sola pagina.
+10. Renderizzare e ispezionare visivamente il PDF completo e le aree modificate.
+11. Verificare che URL e annotazioni cliccabili siano ancora presenti.
+12. Riportare sinteticamente contenuti modificati, compromessi editoriali e
+    verifiche eseguite.
+
+### Regole di sintesi
+
+- Non aggiungere aggettivi promozionali privi di evidenza.
+- Non trasformare un elenco di attività in prosa diluita.
+- Accorpare attività correlate in una sola frase quando migliora la densità.
+- Mantenere parole chiave tecniche importanti per ATS e selezionatori.
+- Espandere un acronimo solo se non è comunemente riconoscibile o se il contesto
+  lo richiede.
+- Evitare ripetizioni dello stesso dominio, standard o tecnologia nella stessa
+  voce.
+- Dare più caratteri alle esperienze recenti, distintive e coerenti con il
+  profilo target.
+- Non alterare date, titoli, aziende, luoghi o link senza una fonte fornita o
+  una verifica esplicita.
+- Proteggere i caratteri speciali LaTeX (`&`, `%`, `#`, `_`) quando compaiono
+  nei contenuti o negli URL.
+
+### Regole di layout
+
+- Non aumentare la pagina oltre una pagina.
+- Non accettare gap automatici negativi.
+- Non coprire un overflow con spazi negativi arbitrari.
+- Non ridurre globalmente i font per inserire una singola nuova frase.
+- Non modificare contemporaneamente molti parametri geometrici senza una
+  motivazione verificabile.
+- Preferire parametri nominati e modifiche reversibili.
+- Conservare simmetria dei margini, gutter, allineamento dei titoli e
+  riempimento fino al fondo.
+- Dopo una modifica alle colonne o alla cornice, verificare entrambe le colonne,
+  non soltanto quella interessata.
+- Dopo una modifica alle pubblicazioni, verificare altezza dei badge, line
+  break, link di tutte le icone e link ORCID.
+
+### Condizioni di completamento
+
+Un aggiornamento è completo soltanto quando:
+
+- il contenuto richiesto è presente e accurato;
+- `cv.pdf` è stato rigenerato;
+- il PDF è di una pagina;
+- lo script delle metriche termina con successo;
+- non sono stati introdotti overflow;
+- il controllo visivo non mostra collisioni o tagli;
+- i link interessati risultano cliccabili;
+- il diff non contiene modifiche estranee.
